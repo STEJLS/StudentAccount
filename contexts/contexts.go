@@ -16,12 +16,14 @@ import (
 	"github.com/gocraft/web"
 )
 
+// Context - базовый контекст
 type Context struct {
 	response t.ResponseMessage
 	user     t.User
 	notJSON  bool
 }
 
+// UserContext - контекст пользователя
 type UserContext struct {
 	*Context
 }
@@ -33,14 +35,12 @@ func (c *AuthContext) getAndValidateAuthData(rw web.ResponseWriter, req *web.Req
 
 	if len(password) < g.MinPasswordLength {
 		log.Printf("Инфо. Попытка авторизация с неверным паролем(password - `%v`)\n", c.login)
-		rw.WriteHeader(http.StatusBadRequest)
 		c.response.Message = fmt.Sprintf("Длина пароля не может быть менее %v символов.", g.MinLoginLength)
 		return
 	}
 
 	if len(c.login) < g.MinLoginLength {
 		log.Printf("Инфо. Попытка авторизация с некорректным логином(login - `%v`)\n", c.login)
-		rw.WriteHeader(http.StatusBadRequest)
 		c.response.Message = fmt.Sprintf("Длина логина не может быть менее %v символов.", g.MinLoginLength)
 		return
 	}
@@ -55,7 +55,6 @@ func (c *Context) userRequire(rw web.ResponseWriter, req *web.Request, next web.
 	cookie, err := req.Cookie("token")
 
 	if err == http.ErrNoCookie {
-		rw.WriteHeader(http.StatusBadRequest)
 		c.response.Message = "Необходимо авторизоваться"
 		return
 	}
@@ -66,7 +65,6 @@ func (c *Context) userRequire(rw web.ResponseWriter, req *web.Request, next web.
 
 	if cookie.Value == "" {
 		http.SetCookie(rw, &http.Cookie{Name: "token", Expires: time.Now().UTC()})
-		rw.WriteHeader(http.StatusBadRequest)
 		c.response.Message = "Необходимо авторизоваться"
 		return
 	}
@@ -77,7 +75,6 @@ func (c *Context) userRequire(rw web.ResponseWriter, req *web.Request, next web.
 
 	if !ok || login == "" {
 		http.SetCookie(rw, &http.Cookie{Name: "token", Expires: time.Now().UTC()})
-		rw.WriteHeader(http.StatusBadRequest)
 		c.response.Message = "Необходимо авторизоваться"
 		return
 	}
@@ -90,7 +87,6 @@ func (c *Context) userRequire(rw web.ResponseWriter, req *web.Request, next web.
 
 	if err == sql.ErrNoRows { // Пользователя с таким логином нет.
 		log.Printf("Ошибка. По логину из токена нет пользователя (login - %v )\n", login)
-		rw.WriteHeader(http.StatusBadRequest)
 		c.response.Message = "Пользователя с таким логином не существует."
 		return
 	}
@@ -146,7 +142,7 @@ func (c *Context) toJSON(rw web.ResponseWriter, req *web.Request, next web.NextM
 
 	if !c.notJSON {
 		rw.Header().Add("Content-type", "application/json;")
-
+		rw.Header().Add("Access-Control-Allow-Origin", "*")
 		_, err := rw.Write(u.ConvertToJSON(c.response))
 		if err != nil {
 			panic(fmt.Errorf("Ошибка. При отдачи: %v", err.Error()))
@@ -163,14 +159,19 @@ func (c *Context) getFaculties(rw web.ResponseWriter, req *web.Request) {
 	c.response.Body = dbu.GetAllFaculties()
 	c.response.Сompleted = true
 }
+func (c *Context) notFound(rw web.ResponseWriter, req *web.Request) {
+	c.response.Message = "Указанной страницы не существует"
+	c.response.Сompleted = false
+}
 
 func GetRoots() *web.Router {
 	rootPath, _ := os.Getwd()
 
 	rootRouter := web.New(Context{}).
 		Middleware((*Context).toJSON).
-		Middleware(web.LoggerMiddleware).
 		Error((*Context).panicHandler).
+		NotFound((*Context).notFound).
+		Middleware(web.LoggerMiddleware).
 		Middleware(web.StaticMiddleware(path.Join(rootPath, "public"), web.StaticOption{IndexFile: "index.html"}))
 
 	rootRouter.Subrouter(AuthContext{}, "/account").
@@ -186,13 +187,15 @@ func GetRoots() *web.Router {
 	adminRouter.Middleware((*UserContext).userRequire).
 		Middleware((*UserContext).adminRequire).
 		Post("verif", createVerif).
-		Put("/faculties", addFacultiesFromCSV).
-		Put("/departments", addDepartmentsFromCSV).
-		Put("/fieldsOfStudy", addFieldsOfStudyFromCSV).
-		Put("/students", addStudentsFromCSV).
-		Put("/practicis", addPracticisFromCSV).
-		Put("/сourseWorks", addCourseWorksFromCSV).
-		Get("/tempPasswords", getTempPasswords)
+		Post("/faculties", addFacultiesFromCSV).
+		Post("/departments", addDepartmentsFromCSV).
+		Post("/fieldsOfStudy", addFieldsOfStudyFromCSV).
+		Post("/students", addStudentsFromCSV).
+		Post("/practicis", addPracticisFromCSV).
+		Post("/сourseWorks", addCourseWorksFromCSV).
+		Get("/tempPasswords", getTempPasswords).
+		Get("/departments", (*UserContext).getDepartments).
+		Get("/faculties", (*UserContext).getFaculties)
 
 	verificatorRouter := rootRouter.Subrouter(VerifContext{}, "/verif")
 	verificatorRouter.Middleware((*VerifContext).userRequire).

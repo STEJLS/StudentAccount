@@ -30,7 +30,6 @@ func (c *AuthContext) Login(rw web.ResponseWriter, req *web.Request) {
 
 	if err == sql.ErrNoRows { // Пользователя с таким логином нет.
 		log.Printf("Инфо. Попытка авторизации по несуществующему логину (login - %v )\n", c.login)
-		rw.WriteHeader(http.StatusBadRequest)
 		c.response.Message = "Пользователя с таким логином не существует."
 		return
 	}
@@ -41,7 +40,6 @@ func (c *AuthContext) Login(rw web.ResponseWriter, req *web.Request) {
 
 	if c.password != user.Password { // Пользователь ввел неверный пароль
 		log.Printf("Инфо. Попытка авторизация с неверным паролем(login - %v )\n", c.login)
-		rw.WriteHeader(http.StatusBadRequest)
 		c.response.Message = "Неверный пароль."
 		return
 	}
@@ -63,7 +61,6 @@ func (c *AuthContext) Logout(rw web.ResponseWriter, req *web.Request) {
 	cookie, err := req.Cookie("token")
 
 	if err == http.ErrNoCookie {
-		rw.WriteHeader(http.StatusBadRequest)
 		c.response.Message = "Необходимо авторизоваться"
 		return
 	}
@@ -75,7 +72,6 @@ func (c *AuthContext) Logout(rw web.ResponseWriter, req *web.Request) {
 	http.SetCookie(rw, &http.Cookie{Name: "token", Expires: time.Now().UTC()})
 
 	if cookie.Value == "" {
-		rw.WriteHeader(http.StatusBadRequest)
 		c.response.Message = "Необходимо авторизоваться"
 		return
 	}
@@ -88,20 +84,29 @@ func (c *AuthContext) Logout(rw web.ResponseWriter, req *web.Request) {
 }
 
 func ChangePassword(c *AuthContext, rw web.ResponseWriter, req *web.Request) {
-	password := req.FormValue(g.NewPasswordValueName)
-
-	if len(password) < g.MinPasswordLength {
-		rw.WriteHeader(http.StatusBadRequest)
+	newPassword := req.FormValue(g.NewPasswordValueName)
+	oldPassword := req.FormValue(g.PasswordValueName)
+	if len(newPassword) < g.MinPasswordLength && len(oldPassword) < g.MinPasswordLength {
 		c.response.Message = fmt.Sprintf("Длина пароля не может быть менее %v символов.", g.MinPasswordLength)
 		return
 	}
 
-	_, err := g.DB.Exec(`UPDATE users SET password = $1, isActivated = true WHERE id = $2`, u.GenerateMD5hash(password), c.user.ID)
-
+	r, err := g.DB.Exec(`UPDATE users SET password = $1, isActivated = true WHERE id = $2 AND password = $3`,
+		u.GenerateMD5hash(newPassword), c.user.ID, u.GenerateMD5hash(oldPassword))
 	if err != nil {
 		panic(fmt.Errorf("Ошибка. При изменения пароля пользователю(login - %v ): %v", c.user.Login, err.Error()))
 	}
 
+	countAffected, err := r.RowsAffected()
+	if err != nil {
+		panic(fmt.Errorf("Ошибка. При изменения пароля пользователю(login - %v ): %v", c.user.Login, err.Error()))
+	}
+
+	if countAffected == 0 {
+		c.response.Message = "Старый пароль указан неверно"
+		return
+	}
+
 	c.response.Сompleted = true
-	c.response.Body = "Ваш пароль успешно изменен"
+	c.response.Message = "Ваш пароль успешно изменен"
 }

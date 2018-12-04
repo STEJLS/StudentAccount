@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"net/http"
 	"time"
 
 	"github.com/STEJLS/StudentAccount/csv"
@@ -78,7 +77,6 @@ func addFacultiesFromCSV(c *UserContext, rw web.ResponseWriter, req *web.Request
 }
 func addDepartmentsFromCSV(c *UserContext, rw web.ResponseWriter, req *web.Request) {
 	file, _, err := req.FormFile("csvFile")
-
 	if err != nil {
 		c.response.Message = "Файл не получен"
 		return
@@ -137,7 +135,7 @@ func addDepartmentsFromCSV(c *UserContext, rw web.ResponseWriter, req *web.Reque
 	}
 
 	c.response.Сompleted = true
-	c.response.Message = "кафедры успешно добавлены"
+	c.response.Message = "Кафедры успешно добавлены"
 }
 
 // addFieldsOfStudyFromCSV - добавляет в систему направления подготовки
@@ -220,7 +218,7 @@ func addStudentsFromCSV(c *UserContext, rw web.ResponseWriter, req *web.Request)
 	studentLines := csv.ReadStudents(file)
 
 	if len(studentLines) == 0 {
-		c.response.Message = "Получен пустой файл"
+		c.response.Message = "Получены некорректные данные"
 		return
 	}
 
@@ -230,14 +228,12 @@ func addStudentsFromCSV(c *UserContext, rw web.ResponseWriter, req *web.Request)
 	for i, item := range studentLines { // проверка направления подготовки и кафедры
 		_, ok := fields[item.FieldOfStudy.Code]
 		if !ok {
-			rw.WriteHeader(http.StatusBadRequest)
 			c.response.Message = fmt.Sprintf("Запись на строке %v имеет неверное направление подготовки", i+1)
 			return
 		}
 
 		_, ok = departments[item.FieldOfStudy.DepartmentName]
 		if !ok {
-			rw.WriteHeader(http.StatusBadRequest)
 			c.response.Message = fmt.Sprintf("Запись на строке %v имеет неверное название кафедры", i+1)
 			return
 		}
@@ -312,19 +308,16 @@ func addStudentsFromCSV(c *UserContext, rw web.ResponseWriter, req *web.Request)
 			if err != nil {
 				panic(fmt.Errorf("Ошибка. При закрытии транзакции для создания студента: %v", err.Error()))
 			}
-
 		}
-
 	}
 
 	c.response.Сompleted = true
-	c.response.Body = "Добавление успешно завершено."
+	c.response.Message = "Добавление успешно завершено."
 }
 
 // addPracticisFromCSV - добавляет в систему направления подготовки
 func addPracticisFromCSV(c *UserContext, rw web.ResponseWriter, req *web.Request) {
 	file, _, err := req.FormFile("csvFile")
-
 	if err != nil {
 		c.response.Message = "Файл не получен"
 		return
@@ -462,7 +455,7 @@ func getTempPasswords(c *UserContext, rw web.ResponseWriter, req *web.Request) {
 		panic(fmt.Errorf("Ошибка. При чтении файла с паролем: %v", err.Error()))
 	}
 
-	rw.Header().Add("Content-Disposition", fmt.Sprintf("attachment; filename=\""+"tempPasswords-%s"+"\"", time.Now().Format("2006-01-02_15:04:05")))
+	rw.Header().Add("Content-Disposition", fmt.Sprintf("attachment; filename=\""+"tempPasswords-%s.csv"+"\"", time.Now().Format("2006-01-02_15:04:05")))
 	rw.Header().Add("Content-type", "text/csv")
 	rw.Header().Add("Content-Length", fmt.Sprintf("%v", len(data)))
 
@@ -473,7 +466,6 @@ func getTempPasswords(c *UserContext, rw web.ResponseWriter, req *web.Request) {
 func createVerif(c *UserContext, rw web.ResponseWriter, req *web.Request) {
 	verif, errStr := u.ValidateVerif(req.FormValue("login"), req.FormValue("password"), req.FormValue("fullName"), req.FormValue("id_faculty"), req.FormValue("id_department"))
 	if verif == nil {
-		rw.WriteHeader(http.StatusBadRequest)
 		c.response.Message = errStr
 		return
 	}

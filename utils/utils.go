@@ -234,13 +234,13 @@ func ValidateVerif(login string, password string, fullName string, IDFaculty str
 			return nil, "id кафедры должно быть числом"
 		}
 
-		err = g.DB.QueryRow(`SELECT EXISTS(SELECT * FROM departments WHERE id = $1)`, idD).Scan(&exist)
+		err = g.DB.QueryRow(`SELECT EXISTS(SELECT * FROM departments WHERE id = $1 AND id_faculty = $2)`, idD, idF).Scan(&exist)
 		if err != nil {
-			panic(fmt.Errorf("Ошибка. При выборке кафедры с id = %v в БД: %v", idF, err.Error()))
+			panic(fmt.Errorf("Ошибка. При выборке кафедры с id = %v и id факультета = %v в БД: %v", idD, idF, err.Error()))
 		}
 
 		if !exist {
-			return nil, "Указанной кафедры не существует"
+			return nil, "Указанной кафедры у факультета не существует"
 		}
 		IDD = &idD
 	}

@@ -1,52 +1,84 @@
-
 <!doctype html>
 <html lang="en">
   <head>
-    <title>Авторизация</title>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="icon" href="/img/favicon.ico">
+    <title>Авторизация</title>
+
+    <script>
+
+    function getOptions() {
+      var form = new FormData();
+      form.append("login", $("#login").val());
+      form.append("password", $("#password").val());
+
+      return  {method:"post", body: form }
+    }
+
+    function setErrorNote(errorText) {
+      $("#response").text(errorText).removeClass("d-none").addClass("text-danger");      
+    }
+
+    function getLogin(e) {   
+      e.preventDefault();
+      fetch('account/login', getOptions())
+      .then(r => {
+        r.json().then(json => {
+          
+          if (json.Сompleted){
+            localStorage.setItem('user', JSON.stringify(json.Body));
+            console.log(json);
+            console.log(json.Message);
+            console.log(json.Сompleted);
+            console.log(json.Body);
+            switch (json.Body.Role) {
+              case 0: 
+              window.location.href = "admin.html";
+              break;
+              case 1: 
+              window.location.href = "verif.html";
+              break;
+              case 2: 
+              window.location.href = "student.html";
+              break;
+            }
+          }else{
+            setErrorNote(json.Message);
+          }
+        })})
+      .catch(error => {
+          setErrorNote("Ошибка на сервере, попробуйте позже.");   
+      }); 
+    }
+    </script>
   </head>
   <body>
-
-    <div class="container col-md-2">
-      <form action="account/login" method="post">
-      <div class="form-group">
-        <label for="login">login</label>
-        <input type="text" class="form-control" name="login" id="login" placeholder="Login">
-        <label for="">Password</label>
-        <input type="password" class="form-control" name="password" id="Password" placeholder="Пароль">
-        <input class="btn btn-info" type="submit" value="войти"><br/><br/>
-      </div>
-    </form>
-    </div>
+      <div class="container col-3">
+          <div class="container col-9 mt-5 mb-4">
+              <img class="img-fluid" src="./img/mstu-logo.png">
+          </div>  
+          <form onsubmit="getLogin(event);" class="form-signin" id="login_form">
+                <h1 class="h5 mb-3 font-weight-normal">Пожалуйста, авторизуйтесь</h1>
+                <label for="login" class="sr-only">Логин</label>
+                <input type="login" id="login" class="form-control mb-1" minlength="5" placeholder="Логин" required autofocus>
+                <label for="password" class="sr-only">Пароль</label>
+                <input type="password"  id="password" class="form-control" minlength="6" placeholder="Пароль" required >
+                <div class="d-none" id="response"></div>
+                <button class="btn btn-lg btn-primary btn-block mt-3" type="submit">Вход</button>
+          </form>
+        </div>
+    
     <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js" integrity="sha384-o+RDsa0aLu++PJvFqy8fFScvbHFLtbvScb8AjopnFD+iEQ7wo/CG0xlczd+2O/em" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
   </body>
 </html>
-<!DOCTYPE html>
 
- <!--Если пусты, то выводим форму входа
- <div style="border: 0px solid blue; 
- position:relative; top:100px; left:400px; height:200px; width:300px;">
-		
-<form action="account/login" method="post">
-    <label>логин:</label><br/>
-  <input name="login" type="text" size="15" maxlength="15"><br/>
-    <label>пароль:</label><br/>
-  <input name="password" type="password" size="15" maxlength="15"><br/><br/>
-  <input type="submit" value="войти"><br/><br/>
-</form>
-Здравствуйте <font color="red">гость</font>! <br/>
-Авторизуйтесь и пройдите по ссылке! 
-</div>
 
-</body>
-</html>
-.--> 
+

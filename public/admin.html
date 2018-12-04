@@ -1,0 +1,404 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="icon" href="/img/favicon.ico">
+    <title>Администрирование</title>
+    <script src="/js/admin.js"></script>
+
+  </head>
+
+  <body>
+    
+    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow p-1">
+        <div class="container">
+      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">БАМОНКА</a>
+      <!-- <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search"> -->
+      <ul class="navbar-nav">
+        <div class="row pr-2">
+            <li class="nav-item text-nowrap mr-3" onclick="disp('chPas')">
+                <a class="nav-link" href="#" style="font-size: 18px;">
+                  <span data-feather="settings"></span>
+                  Сменить пароль
+                </a>
+              </li>
+              
+              <li class="nav-item text-nowrap">
+                <a class="nav-link" href="#" onclick="logout()" style="font-size: 18px;">
+                  <span data-feather="log-out"></span>
+                  Выход
+              </a>
+            </li>
+          </div>
+      </ul>
+    </div>
+    </nav>  
+
+    <div class="container mt-5">
+      <div class="row pt-2">
+        <nav class="col-md-3 d-none d-md-block sidebar px-1">
+          <div class="sidebar-sticky">
+            <ul class="nav  nav-tabs flex-column pt-3">
+              <li class="nav-item" onclick="disp('div1')">
+                <a class="nav-link" href="#">
+                  <span data-feather="user-check"></span>
+                  Создание верификатора <span class="sr-only">(current)</span>
+                </a>
+              </li>
+              <li class="nav-item" onclick="disp('div2')">
+                <a class="nav-link" href="#">
+                  <span data-feather="align-left"></span>
+                  Добавление факултетов
+                </a>
+              </li>
+              <li class="nav-item" onclick="disp('div3')">
+                <a class="nav-link" href="#">
+                  <span data-feather="layers"></span>
+                  Добавление кафедр
+                </a>
+              </li>
+              <li class="nav-item" onclick="disp('div4')">
+                <a class="nav-link" href="#">
+                  <span data-feather="move"></span>
+                  Добавление направлений подготовки
+                </a>
+              </li>
+              <li class="nav-item" onclick="disp('div5')">
+                  <a class="nav-link" href="#">
+                    <span data-feather="users"></span>
+                    Добавление успеваемости
+                  </a>
+              </li>
+              <li class="nav-item" onclick="disp('div6')">
+                  <a class="nav-link" href="#">
+                    <span data-feather="inbox"></span>
+                    Добавление практик
+                  </a>
+              </li>
+              <li class="nav-item" onclick="disp('div7')">
+                  <a class="nav-link" href="#">
+                    <span data-feather="file"></span>
+                    Добавление курсовых работ
+                  </a>
+              </li>
+            </ul>          
+          </div>
+        </nav>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-9 pb-4 px-5 bg-light pt-4">
+          <div class="" id="div1">
+            <div class="container col-12">
+            <h1 class="h5 mb-3 font-weight-normal">Создание верификатора</h1>
+
+            <form onsubmit="createVerif(event)">
+              <div class="form-group row">
+                  <label for="login" class="col-sm-2 col-form-label">Логин</label>
+                  <div class="col-sm-10">
+                      <input type="text" class="form-control" id="login" placeholder="Логин" required autofocus >
+                  </div>
+              </div>
+              <div class="form-group row">
+                  <label for="password" class="col-sm-2 col-form-label">Пароль</label>
+                  <div class="col-sm-10">
+                      <input type="password" class="form-control" id="password" placeholder="Пароль" minlength="6" required>
+                  </div>
+              </div>
+              <div class="form-group row">
+                  <label for="rePassword" class="col-sm-2 col-form-label">Подтверждение</label>
+                  <div class="col-sm-10">
+                      <input type="password" class="form-control" id="rePassword" placeholder="Подтвердите пароль" minlength="6" required>
+                  </div>
+              </div>
+              <div class="form-group row">
+                  <label for="fio" class="col-sm-2 col-form-label">ФИО</label>
+                  <div class="col-sm-10">
+                      <input type="fio" class="form-control" id="fio" placeholder="ФИО" required>
+                  </div>
+              </div>
+              <div  class="form-group row">
+                  <label for="faculties" class="col-sm-2 col-form-label">Факультет</label>
+                  <div class="col-sm-10">
+                      <select onchange="getDepartments(event)" id="faculties" class="form-control" required>
+                      </select>
+                  </div>
+              </div>
+              <div class="form-group row">
+                  <label for="departments" class="col-sm-2 col-form-label">Кафедра</label>
+                  <div class="col-sm-10">
+                      <select id="departments" class="form-control" required>              
+                      </select>
+                  </div>
+              </div>
+              <div class="d-none" id="addVerifResponse">response</div>
+              <div class="container col-5">
+                      <button type="submit" class="btn btn-primary btn-block">Создать
+                              <i class="fa fa-spinner fa-spin d-none" style="font-size:24px" id="spinner"></i>
+                      </button>
+              </div>
+            </form>
+            </div>
+          </div>
+          <div class="d-none"id="div2" style="font-size: 18px;">
+            <div class="container">
+                <h1 class="h5 mb-3 font-weight-normal">Добавление факултетов</h1>
+                CSV файл должен иметь следующий формат:
+                <ul>
+                  <li>Полное название факультета</li>
+                  <li>Короткое название факультета</li>
+                </ul>
+                <p class="font-italic">Например:  </p>
+                <p>Машиностроительный,М-КФ</p>
+              
+              <form onsubmit="csvHandler(event,'admin/faculties');" >
+                <div class="form-group">
+                  <label for="file" class="sr-only">CSV файл с факультетами</label>
+                  <input type="file" class="form-control-file" id="file">
+                  <div class="d-none" id="response"></div>
+                </div>
+                <button class="btn btn-lg btn-primary btn-block mt-3 col-6" type="submit">
+                  Добавить факультеты
+                  <i class="fa fa-spinner fa-spin d-none" style="font-size:24px" id="spinner"></i>
+                </button>  
+              </form>
+            </div>
+          </div>
+
+          <div class="d-none"id="div3" style="font-size: 18px;">
+            <div class="container">
+              <h1 class="h5 mb-3 font-weight-normal">Добавление кафедр</h1>
+              CSV файл должен иметь следующий формат:
+              <ul>
+                <li>Полное название факультета</li>
+                <li>Полное название кафедра</li>
+                <li>Короткое название кафедры</li>
+              </ul>
+              <p class="font-italic">Например:  </p>
+              <p>Информатика и управление,Проектирование и технология производства электронных приборов,ИУ1-КФ</p>
+
+              <form onsubmit="csvHandler(event,'admin/departments');" >
+                <div class="form-group">
+                  <label for="file" class="sr-only">CSV файл с кафедрами</label>
+                  <input type="file" class="form-control-file" id="file">
+                  <div class="d-none" id="response"></div>
+                </div>
+                <button class="btn btn-lg btn-primary btn-block mt-3 col-6" type="submit">
+                  Добавить кафедры
+                  <i class="fa fa-spinner fa-spin d-none" style="font-size:24px" id="spinner"></i>
+                </button>  
+              </form>
+            </div>        
+          </div>
+
+          <div class="d-none"id="div4" style="font-size: 18px;">
+            <div class="container">
+              <h1 class="h5 mb-3 font-weight-normal">Добавление направлений подготовки</h1>
+              CSV файл должен иметь следующий формат:
+              <ul>
+                <li>Полное название кафедры</li>
+                <li>Полное название направления подготовки</li>
+                <li>Код направления подготовки</li>
+                <li>Название группы условно</li>
+                <li>
+                  Степень обучения:
+                  <ul>
+                    <li>0-бакалавр</li>
+                    <li>1-специалист</li>
+                    <li>2-магистр</li>
+                    <li>3-аспирант</li>        
+                  </ul>
+                </li>
+              </ul>
+              <p class="font-italic">Например:</p>
+              <p>"Программное обеспечение ЭВМ, информационные технологии",Программная инженерия,09.03.04,ГрУсл12,0</p>
+              
+              <form onsubmit="csvHandler(event,'admin/fieldsOfStudy');" >
+                <div class="form-group">
+                  <label for="file" class="sr-only">CSV файл с направлениями подготовки</label>
+                  <input type="file" class="form-control-file" id="file">
+                  <div class="d-none" id="response"></div>
+                </div>
+                <button class="btn btn-lg btn-primary btn-block mt-3 col-6" type="submit">
+                  Добавить направления подготовки
+                  <i class="fa fa-spinner fa-spin d-none" style="font-size:24px" id="spinner"></i>
+                </button>  
+              </form>
+            </div>
+          </div>
+
+          <div class="d-none"id="div5" style="font-size: 18px;">
+            <div class="container">
+              <h1 class="h5 mb-3 font-weight-normal">Добавление успеваемости</h1>
+              CSV файл должен иметь следующий формат:
+              <ul>
+                <li>Номер студента</li>
+                <li>ФИО</li>
+                <li>Код направления подготовки</li>
+                <li>Название группы условно</li>
+                <li>Номер группы</li>
+                <li>Полное название кафедры</li>
+                <li>Количество лет обучения</li>
+                <li>Название предмета</li>
+                <li>Тип сдачи:
+                  <ul>
+                    <li>0-экзамен</li>
+                    <li>1-д.зачет</li>
+                    <li>2-зачет</li>
+                  </ul>
+                </li>
+                <li>Оцента</li>
+                <li>Семестр</li>
+                <li>Пересдача(true/false)</li>
+              </ul>
+              <p class="font-italic">Например:</p>
+              <p>15Ф041,Селиванов Павел Александрович,09.03.04,ИТД.Б,72,"Системы автоматического управления и электротехника",4,ТОБД,0,5,2,false</p>
+            
+              <form onsubmit="csvHandler(event,'admin/students');" >
+                <div class="form-group">
+                  <label for="file" class="sr-only">CSV файл с успеваемостями</label>
+                  <input type="file" class="form-control-file" id="file">
+                  <div class="d-none" id="response"></div>
+                </div>
+                <div class="container">
+                    <div class="row">
+                      <button class="btn btn-lg btn-primary btn-block mt-3 col-5" type="submit">
+                        Добавить успеваемости
+                        <i class="fa fa-spinner fa-spin d-none" style="font-size:24px" id="spinner"></i>
+                      </button>  
+                        <a class="btn btn-lg btn-success btn-block text-white col-5 mt-3 ml-5" onclick="getTempPasswords()" style="">
+                          Скачать временные пароли
+                          <i class="fa fa-spinner fa-spin d-none" style="font-size:24px" id="spinner"></i>
+                        </a>  
+                      </div>
+                    </div> 
+              </form>
+            </div>
+          </div>
+
+          <div class="d-none"id="div6" style="font-size: 18px;">
+            <div class="container">
+              <h1 class="h5 mb-3 font-weight-normal">Добавление практик</h1>
+              CSV файл должен иметь следующий формат:
+              <ul>
+                <li>Номер студента</li>
+                <li>Семестр</li>
+                <li>название (учебная, производственная и т.д.)</li>
+                <li>ФИО руководителя</li>
+                <li>Название предприятия</li>
+                <li>Дата начала в формате ГГГГ-ММ-ДД</li>
+                <li>Дата окончания в формате ГГГГ-ММ-ДД</li>
+                <li>Оценка</li>
+              </ul>
+              <p class="font-italic">Например:</p>
+              <p>15Ф041,1,Учебная,Пупкин,АСТРАЛ,2010-06-30,2010-07-30,5</p>
+              
+              <form onsubmit="csvHandler(event,'admin/practicis');" >
+                <div class="form-group">
+                  <label for="file" class="sr-only">CSV файл с практиками</label>
+                  <input type="file" class="form-control-file" id="file">
+                  <div class="d-none" id="response"></div>
+                </div>
+                <button class="btn btn-lg btn-primary btn-block mt-3 col-6" type="submit">
+                  Добавить практики
+                  <i class="fa fa-spinner fa-spin d-none" style="font-size:24px" id="spinner"></i>
+                </button>  
+              </form>
+            </div>
+          </div>
+ 
+          <div class="d-none"id="div7">
+              <div class="container" style="font-size: 18px;">
+                  <h1 class="h5 mb-3 font-weight-normal">Добавление курсовых работ</h1>
+                  CSV файл должен иметь следующий формат:
+                  <ul>
+                      <li>Номер студента</li>
+                      <li>Полное название кафедры</li>
+                      <li>Код направления подготовки</li>
+                      <li>Предмет</li>
+                      <li>ФИО руководителя</li>
+                      <li>Оценка</li>
+                      <li>Семестр</li>
+                  </ul>
+                  <p class="font-italic">Например:</p>
+                  <p>15Ф041,"Программное обеспечение ЭВМ, информационные технологии",09.03.04,ОС,Пупкиипи,5,1</p>
+              
+                  <form onsubmit="csvHandler(event,'admin/сourseWorks');" >
+                      <div class="form-group">
+                          <label for="file" class="sr-only">CSV файл с курсовыми работами</label>
+                          <input type="file" class="form-control-file" id="file">
+                          <div class="d-none" id="response"></div>
+                      </div>
+                      <button class="btn btn-lg btn-primary btn-block mt-3 col-6"  type="submit">
+                          Добавить курсовые работы
+                          <i class="fa fa-spinner fa-spin d-none" style="font-size:24px" id="spinner"></i>
+                      </button>  
+                  </form>
+              </div>
+          </div>
+
+
+          <div class="d-none" id="chPas">
+              <div class="container" style="font-size: 18px;">
+          <form onsubmit="changePassword(event);" class="form-signin" id="login_form">
+                <h1 class="h5 mb-3 mt-3 font-weight-normal">Изменение пароля</h1>
+  
+                <label for="oldPassword" class="sr-only">Старый пароль</label>
+                <input type="password" id="oldPassword" class="form-control mb-1" minlength="6" placeholder="Старый пароль" required autofocus>
+  
+                <label for="newPassword" class="sr-only">Новый пароль</label>
+                <input type="password"  id="newPassword" class="form-control mb-1" minlength="6" placeholder="Новый пароль" required >
+  
+                <label for="reNewPassword" class="sr-only">Новый пароль</label>
+                <input type="password"  id="reNewPassword" class="form-control" minlength="6"  placeholder="Повторите новый пароль" required >
+  
+                <div class="d-none" id="ChangePassResponse"></div>
+                <button class="btn btn-lg btn-primary btn-block mt-3" type="submit">сменить пароль</button>
+          </form>
+        </div>
+        </div>
+        </main>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    
+    <script>
+      $(document).ready(function(){
+        $("#addVerifResponse").addClass("d-none")
+    console.log(JSON.parse(localStorage["user"]));
+ 
+    fetch('admin/faculties').then(r => {
+      r.json().then(json => {
+          checkAuth(json)
+  
+          if (!json.Сompleted){
+              setErrorNote("addVerifResponse", json.Message);
+              return;
+          }
+          const selectFuc = document.getElementById("faculties");
+          json.Body.forEach(item => {
+              var newOption = document.createElement('option');
+              newOption.innerHTML = item.Name;
+              newOption.value = item.ID;
+              selectFuc.appendChild(newOption);
+          })
+                  
+          updateDepartments(selectFuc.value);
+             
+      }).catch(error => {
+          setErrorNote("Ошибка на сервере, попробуйте позже.");   
+    })  
+    })  
+        console.log(JSON.parse(localStorage["user"]));
+      });
+      
+      //  Icons
+      feather.replace();
+      </script>    
+  </body>
+</html>
