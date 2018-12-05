@@ -22,5 +22,5 @@ func main() {
 
 	u.InitDB(config.Admin.Login, config.Admin.Password)
 
-	http.ListenAndServe("0.0.0.0:3000", ctx.GetRoots())
+	http.ListenAndServe("127.0.0.1:3000", ctx.GetRoots())
 }

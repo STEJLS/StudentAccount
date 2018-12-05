@@ -202,16 +202,18 @@ func GetRoots() *web.Router {
 		Middleware((*VerifContext).verifRequire).
 		Get("/departments", (*VerifContext).getDepartments).
 		Get("/faculties", (*VerifContext).getFaculties).
-		Get("/article", (*VerifContext).getArticle).
-		Patch("article", (*VerifContext).confirmArticle)
+		Get("/article/:article_id", (*VerifContext).getArticle).
+		Get("/articlesForVerif", (*VerifContext).articlesForVerif).
+		Post("/article", (*VerifContext).confirmArticle).
+		Post("/cancelArticle", (*VerifContext).cancelArticle)
 
 	userRouter := rootRouter.Subrouter(studentContext{}, "/student")
 	userRouter.Middleware((*studentContext).userRequire).
 		Middleware((*studentContext).StudentRequire).
 		Get("/marks", getStudentMarks).
 		Get("/info", getStudentInfo).
-		Get("/article", (*studentContext).getArticle).
+		Get("/article/:article_id", (*studentContext).getArticle).
 		Post("/article", addArticle).
-		Patch("/courseWork", addCourseWorkName)
+		Post("/courseWork", addCourseWorkName)
 	return rootRouter
 }

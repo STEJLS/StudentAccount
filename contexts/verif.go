@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"path"
 	"strconv"
 
@@ -18,7 +19,7 @@ type VerifContext struct {
 }
 
 func (c *Context) getArticle(rw web.ResponseWriter, req *web.Request) {
-	stringID := req.FormValue("id")
+	stringID := req.PathParams["article_id"]
 	if stringID == "" {
 		rw.WriteHeader(http.StatusBadRequest)
 		c.response.Message = "Укажите id статьи"
@@ -56,18 +57,44 @@ func (c *Context) getArticle(rw web.ResponseWriter, req *web.Request) {
 	c.notJSON = true
 }
 
+func (c *VerifContext) cancelArticle(rw web.ResponseWriter, req *web.Request) {
+	id, err := strconv.Atoi(req.FormValue("id"))
+	if err != nil {
+		c.response.Message = "id должно быть числом"
+		return
+	}
+
+	var fileName string
+	err = g.DB.QueryRow(`SELECT filename FROM articles WHERE id = $1`, id).Scan(&fileName)
+	if err == sql.ErrNoRows {
+		c.response.Message = "C указанным id статьи не существует"
+		return
+	} else if err != nil {
+		panic(fmt.Errorf("Ошибка. Во время отклонения статьи: %v", err.Error()))
+	}
+
+	_, err = g.DB.Exec(`DELETE FROM articles WHERE id = $1`, id)
+	if err != nil {
+		panic(fmt.Errorf("Ошибка. Во время отклонения статьи: %v", err.Error()))
+	}
+
+	os.Remove(path.Join(g.ArticlesDirectory, fileName))
+
+	c.response.Сompleted = true
+	c.response.Body = "Статья успешно отклонена"
+
+}
+
 func (c *VerifContext) confirmArticle(rw web.ResponseWriter, req *web.Request) {
 
 	article, errStr := u.ValidateArticle(req.FormValue("name"), req.FormValue("journal"), req.FormValue("biblioRecord"), req.FormValue("type"))
 	if article == nil {
-		rw.WriteHeader(http.StatusBadRequest)
 		c.response.Message = errStr
 		return
 	}
 
 	id, err := strconv.Atoi(req.FormValue("id"))
 	if err != nil {
-		rw.WriteHeader(http.StatusBadRequest)
 		c.response.Message = "id должно быть числом"
 		return
 	}
@@ -81,7 +108,6 @@ func (c *VerifContext) confirmArticle(rw web.ResponseWriter, req *web.Request) {
 	}
 
 	if n, _ := r.RowsAffected(); n == 0 {
-		rw.WriteHeader(http.StatusBadRequest)
 		c.response.Message = "C указанным id статьи не существует"
 		return
 	}
@@ -89,4 +115,53 @@ func (c *VerifContext) confirmArticle(rw web.ResponseWriter, req *web.Request) {
 	c.response.Сompleted = true
 	c.response.Body = "Статья успешно подтверждена"
 
+}
+
+func (c *VerifContext) articlesForVerif(rw web.ResponseWriter, req *web.Request) {
+	rows, err := g.DB.Query(`SELECT a.id, u.fullname, (s.team||'-'|| s.teamnumber) as team, 
+									a.name, a.journal, a.bibliorecord, a.type FROM articles as a
+							JOIN students s ON s.id = a.id_student
+							JOIN users u ON u.id_student = s.id
+							WHERE confirmed = false 
+							AND a.id_student IN (
+								SELECT id FROM students where id_field in(
+								SELECT id FROM fieldsofstudy WHERE id_department = $1))`,
+		c.user.IDDepartment)
+	if err != nil {
+		panic(fmt.Errorf("Ошибка. При выборке статей: %v", err.Error()))
+	}
+	defer rows.Close()
+
+	articlesInfo := make([]*struct {
+		ID           int
+		FIO          string
+		Team         string
+		Name         string
+		Journal      string
+		BiblioRecord string
+		ArticlType   string
+	}, 0)
+
+	for rows.Next() {
+		articleInfo := new(struct {
+			ID           int
+			FIO          string
+			Team         string
+			Name         string
+			Journal      string
+			BiblioRecord string
+			ArticlType   string
+		})
+
+		err = rows.Scan(&articleInfo.ID, &articleInfo.FIO, &articleInfo.Team, &articleInfo.Name,
+			&articleInfo.Journal, &articleInfo.BiblioRecord, &articleInfo.ArticlType)
+		if err != nil {
+			panic(fmt.Errorf("Ошибка. При выборке статей: %v", err.Error()))
+		}
+
+		articlesInfo = append(articlesInfo, articleInfo)
+	}
+
+	c.response.Body = articlesInfo
+	c.response.Сompleted = true
 }

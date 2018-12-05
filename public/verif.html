@@ -1,23 +1,228 @@
-<!DOCTYPE html>
-<html>
-<head>
-        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
- 
-</script>
-<script>
-$(document).ready(function(){
-  $("button").click(function(){
-    $("p").hide();
-  });
-});
-</script>
-</head>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-<body>
-  verif
-<h2>Это заголовок</h2>
-<p>Это параграф.</p>
-<p>Это другой параграф.</p>
-<button>Кликни меня</button>
-</body>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    
+    <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
+    
+    <link rel="icon" href="/img/favicon.ico">
+    <title>Верификатор КФ МГТУ</title>
+    <script src="/js/verif.js"></script>
+
+
+  </head>
+
+  <body>    
+    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow p-1">
+      <div class="container">
+        <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#" id="brand">КФ МГТУ</a>
+        <!-- <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search"> -->
+        <ul class="navbar-nav">
+          <div class="row pr-2">
+              <li class="nav-item text-nowrap mr-3" onclick="disp('chPas')">
+                  <a class="nav-link" href="#" style="font-size: 18px;">
+                    <span data-feather="settings"></span>
+                    Сменить пароль
+                  </a>
+                </li>
+                
+                <li class="nav-item text-nowrap">
+                  <a class="nav-link" href="#" onclick="logout()" style="font-size: 18px;">
+                    <span data-feather="log-out"></span>
+                    Выход
+                </a>
+              </li>
+            </div>
+        </ul>
+      </div>
+    </nav>  
+
+    <div class="container mt-5">
+      <div class="row pt-2">
+        <nav class="col-md-3 d-none d-md-block sidebar px-1">
+          <div class="sidebar-sticky">
+            <ul class="nav  nav-tabs flex-column pt-3">
+              <li class="nav-item" onclick="disp('div1')">
+                <a class="nav-link" href="#">
+                  <span data-feather="user-check"></span>
+                  Подтверждение статей
+                  <span class="sr-only">(current)</span>
+                </a>
+              </li>
+              <li class="nav-item" onclick="disp('div2')">
+                <a class="nav-link" href="#">
+                  <span data-feather="align-left"></span>
+                  Подтверждение курсовых
+                </a>
+              </li>
+              <li class="nav-item" onclick="disp('div3')">
+                <a class="nav-link" href="#">
+                  <span data-feather="layers"></span>
+                  2
+                </a>
+              </li>
+              <li class="nav-item" onclick="disp('div4')">
+                <a class="nav-link" href="#">
+                  <span data-feather="move"></span>
+                  4
+                </a>
+              </li>
+              <li class="nav-item" onclick="disp('div5')">
+                  <a class="nav-link" href="#">
+                    <span data-feather="users"></span>
+                    5
+                  </a>
+              </li>
+              <li class="nav-item" onclick="disp('div6')">
+                  <a class="nav-link" href="#">
+                    <span data-feather="inbox"></span>
+                    6
+                  </a>
+              </li>
+              <li class="nav-item" onclick="disp('div7')">
+                  <a class="nav-link" href="#">
+                    <span data-feather="file"></span>
+                    7
+                  </a>
+              </li>
+            </ul>          
+          </div>
+        </nav>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-9 pb-4 px-5 bg-light pt-4">          
+          <div style="font-size: 18px;"  id="div1">
+            
+            <p class="h5 mb-3 font-weight-normal">Подтверждение статей</p>
+            <p class="h6 mb-3 font-weight-normal d-none" id="noArticlesForVerir">Статей для подтверждения нет</p>
+            <table class="table">
+              <tbody id="articles-to-verif-table">
+              </tbody>
+            </table>    
+          </div>
+          
+          <div class="d-none"id="div2" style="font-size: 18px;">
+              <p class="h5 mb-3 font-weight-normal">Подтверждение курсовых работ</p>
+              <p class="h6 mb-3 font-weight-normal d-none" id="noCoursesForVerir">Курсовых работ для подтверждения нет</p>
+          </div>         
+
+          <div class="d-none"id="div3" style="font-size: 18px;">
+            div3
+          </div>
+
+          <div class="d-none" id="chPas">
+              <div class="container" style="font-size: 18px;">
+                <form onsubmit="changePassword(event);" class="form-signin" id="login_form">
+                    <div class="container col-6">
+                      <h1 class="h5 mb-3 mt-3 font-weight-normal">Изменение пароля</h1>
+        
+                      <label for="oldPassword" class="sr-only">Старый пароль</label>
+                      <input type="password" id="oldPassword" class="form-control mb-1" minlength="6" placeholder="Старый пароль" required autofocus>
+        
+                      <label for="newPassword" class="sr-only">Новый пароль</label>
+                      <input type="password"  id="newPassword" class="form-control mb-1" minlength="6" placeholder="Новый пароль" required >
+
+                      <label for="reNewPassword" class="sr-only">Новый пароль</label>
+                      <input type="password"  id="reNewPassword" class="form-control" minlength="6"  placeholder="Повторите новый пароль" required >
+                      <div class="d-none" id="ChangePassResponse"></div>
+                      <button class="btn btn-lg btn-primary btn-block mt-3" type="submit">Cменить пароль</button>
+                    </div>
+                </form>
+              </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <div class="modal fade" id="verif-article-modal" tabindex="-1" role="dialog" aria-labelledby="verif-article-ModalLabel" aria-hidden="true">
+        <div class="modal-dialog " role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="verif-article-ModalLabel">Подтверждение статьи</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form id="verif-article-confirm-form"> 
+                      <div class="form-group row">
+                        <label for="verif-article-author" class="col-3 col-form-label">Автор</label>
+                        <div class="col-9">
+                          <input type="text" readonly class="form-control-plaintext" id="verif-article-author" value="">
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="verif-article-team" class="col-3 col-form-label">Группа</label>
+                        <div class="col-9">
+                          <input type="text" readonly class="form-control-plaintext" id="verif-article-team" value="">
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="verif-article-name" class="col-3 col-form-label">Название</label>
+                        <div class="col-9">
+                              <textarea class="form-control" rows="3" id="verif-article-name" required></textarea>
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="verif-article-journal" class="col-3 col-form-label">Журнал</label>
+                        <div class="col-9">
+                            <textarea class="form-control" rows="3" id="verif-article-journal" required></textarea>
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                          <label for="verif-article-ref" class="col-3 col-form-label">библиограф. ссылка</label>
+                          <div class="col-9">
+                              <textarea class="form-control" rows="5" id="verif-article-ref" required>
+                              </textarea>
+                          </div>
+                      </div>
+                      <div class="form-group row">
+                          <label for="verif-article-type" class="col-3 col-form-label">Тип</label>
+                          <div class="col-9">
+                              <select class="form-control" id="verif-article-type" required>
+                                  <option>Конференция</option>
+                                  <option>Конференция РИНЦ</option>
+                                  <option>Статья ВАК</option>
+                                  <option>Статья РИНЦ</option>
+                                  <option>Статья Scopus</option>
+                                  <option>Статья Web of Science</option>
+                                  </select>
+                          </div>
+                      </div>       
+                      <div class="d-none" id="verifArticleResponse"></div>
+                      <div class="d-flex " >
+                          <a href="" class="btn btn-info mr-auto" id="verif-article-download">Скачать статью</a>
+            
+                          <button type="button" class="btn btn-danger mr-2" id="verif-article-cancel-btn">Отклонить</button>
+                          <button type="submit" class="btn btn-success">Принять</button>
+                        </div>                 
+                    </form>
+            </div>
+          
+
+     
+        </div>
+      </div>
+
+
+    <script>
+        setPersonalInfo();
+        setArticlesToVerif();
+        $('#verif-article-modal').on('show.bs.modal',setHandlerForModalVerifArticle);
+      //  Icons
+      feather.replace();
+    </script>    
+     
+    <script>
+
+
+      </script>
+  </body>
 </html>
