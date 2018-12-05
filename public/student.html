@@ -1,25 +1,222 @@
-<!DOCTYPE html>
-<html>
-<head>
-        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
- 
-</script>
-<script>
-$(document).ready(function(){
-  $("button").click(function(){
-    $("p").hide();
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    console.log(localStorage.getItem('myCat'));
-  });
-});
-</script>
-</head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="icon" href="/img/favicon.ico">
+    <title>Личный кабинет студента КФ МГТУ</title>
+    <script src="/js/student.js"></script>
 
-<body>
-  student
-<h2>Это заголовок</h2>
-<p>Это параграф.</p>
-<p>Это другой параграф.</p>
-<button>Кликни меня</button>
-</body>
+  </head>
+
+  <body>
+    
+    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow p-1">
+        <div class="container">
+      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#" id="brand">КФ МГТУ</a>
+      <!-- <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search"> -->
+      <ul class="navbar-nav">
+        <div class="row pr-2">
+            <li class="nav-item text-nowrap mr-3" onclick="disp('chPas')">
+                <a class="nav-link" href="#" style="font-size: 18px;">
+                  <span data-feather="settings"></span>
+                  Сменить пароль
+                </a>
+              </li>
+              
+              <li class="nav-item text-nowrap">
+                <a class="nav-link" href="#" onclick="logout()" style="font-size: 18px;">
+                  <span data-feather="log-out"></span>
+                  Выход
+              </a>
+            </li>
+          </div>
+      </ul>
+    </div>
+    </nav>  
+
+    <div class="container mt-5">
+      <div class="row pt-2">
+        <nav class="col-md-3 d-none d-md-block sidebar px-1">
+          <div class="sidebar-sticky">
+            <ul class="nav  nav-tabs flex-column pt-3">
+              <li class="nav-item" onclick="disp('div1')">
+                <a class="nav-link" href="#">
+                  <span data-feather="user-check"></span>
+                  Успеваемость
+                  <span class="sr-only">(current)</span>
+                </a>
+              </li>
+              <li class="nav-item" onclick="disp('div2')">
+                <a class="nav-link" href="#">
+                  <span data-feather="align-left"></span>
+                  Личная информация
+                </a>
+              </li>
+              <li class="nav-item" onclick="disp('div3')">
+                <a class="nav-link" href="#">
+                  <span data-feather="layers"></span>
+                  Добавить статью 
+                </a>
+              </li>
+              <li class="nav-item" onclick="disp('div4')">
+                <a class="nav-link" href="#">
+                  <span data-feather="move"></span>
+                  4
+                </a>
+              </li>
+              <li class="nav-item" onclick="disp('div5')">
+                  <a class="nav-link" href="#">
+                    <span data-feather="users"></span>
+                    5
+                  </a>
+              </li>
+              <li class="nav-item" onclick="disp('div6')">
+                  <a class="nav-link" href="#">
+                    <span data-feather="inbox"></span>
+                    6
+                  </a>
+              </li>
+              <li class="nav-item" onclick="disp('div7')">
+                  <a class="nav-link" href="#">
+                    <span data-feather="file"></span>
+                    7
+                  </a>
+              </li>
+            </ul>          
+          </div>
+        </nav>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-9 pb-4 px-5 bg-light pt-4">
+          <div class="" id="div1">
+            <div class="container">
+                <span class="h4" id="">Успеваемость</span>
+              <table class="table mt-4">
+                <thead>
+                  <tr>
+                    <th>Предмет</th>
+                    <th>Оценка</th>
+                    <th>Тип сдачи</th>
+                    <th>Пересдача</th>
+                    <th>Семестр</th>          
+                  </tr>
+                </thead>
+                <tbody id="progress"> 
+                  
+                </tbody>
+              </table>
+
+            </div>
+          </div>
+
+          <div class="d-none"id="div2" style="font-size: 18px;">
+            <div class="container">
+                <span class="h4" id="fio"></span>
+                <table class="table  mt-4">
+                    <tbody>
+                      <tr>
+                        <th scope="row">Факультет</th>
+                        <td id="faculty"></td>
+                      </tr>
+                      <tr>
+                        <th scope="row">Кафедра</th>
+                        <td id="department"></td>
+                      </tr>
+                      <tr>
+                        <th scope="row">Направление подготовки</th>
+                        <td id="fieldOfStudy"></td>
+                      </tr>
+                      <tr>
+                        <th scope="row">Группа</th>
+                        <td id="group"></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  </div>
+            </div>
+          
+
+          <div class="d-none"id="div3" style="font-size: 18px;">
+           <div class="container col-12">
+            <h1 class="h3 mb-4 font-weight-normal">Добавить статью</h1>
+            <form onsubmit="createArticle(event)">
+              <div class="form-group row">
+                  <label for="login" class="col-3 col-form-label">Название статьи</label>
+                  <div class="col-9">
+                      <input type="text" class="form-control" id="articleName" placeholder="Название статьи" required autofocus >
+                  </div>
+              </div>
+              <div class="form-group row">
+                  <label for="password" class="col-3 col-form-label">Название журнала</label>
+                  <div class="col-9">
+                      <input type="text" class="form-control" id="journalName" placeholder="Название журнала" required>
+                  </div>
+              </div>
+              <div class="form-group row">
+                  <label for="biblioRecord" class="col-3 col-form-label">библиографическая ссылка</label>
+                  <div class="col-9">
+                      <textarea class="form-control" rows="5" placeholder="библиографическая ссылка" id="biblioRecord" required></textarea>
+                  </div>
+              </div>
+              <div class="form-group row">
+                  <label for="articleType" class="col-3 col-form-label">Тип</label>
+                  <div class="col-9">
+                      <select class="form-control" id="articleType" required>
+                          <option>Конференция</option>
+                          <option>Конференция РИНЦ</option>
+                          <option>Статья ВАК</option>
+                          <option>Статья РИНЦ</option>
+                          <option>Статья Scopus</option>
+                          <option>Статья Web of Science</option>
+                        </select>
+                  </div>
+              </div>
+              <input type="file" class="form-control-file" id="articleFile" required>
+              <div class="d-none" id="createArticleResponse"></div>
+              <div class="container col-5">
+                  <button type="submit" class="btn btn-primary btn-block">Добавить
+                          <i class="fa fa-spinner fa-spin d-none" style="font-size:24px" id="spinner"></i>
+                  </button>
+              </div>
+            </form>
+            </div>
+          </div>
+
+          <div class="d-none" id="chPas">
+              <div class="container" style="font-size: 18px;">
+          <form onsubmit="changePassword(event);" class="form-signin" id="login_form">
+              <div class="container col-6">
+                <h1 class="h5 mb-3 mt-3 font-weight-normal">Изменение пароля</h1>
+  
+                <label for="oldPassword" class="sr-only">Старый пароль</label>
+                <input type="password" id="oldPassword" class="form-control mb-1" minlength="6" placeholder="Старый пароль" required autofocus>
+  
+                <label for="newPassword" class="sr-only">Новый пароль</label>
+                <input type="password"  id="newPassword" class="form-control mb-1" minlength="6" placeholder="Новый пароль" required >
+
+                <label for="reNewPassword" class="sr-only">Новый пароль</label>
+                <input type="password"  id="reNewPassword" class="form-control" minlength="6"  placeholder="Повторите новый пароль" required >
+                <div class="d-none" id="ChangePassResponse"></div>
+                <button class="btn btn-lg btn-primary btn-block mt-3" type="submit">Cменить пароль</button>
+              </div>
+          </form>
+        </div>
+        </div>
+        </main>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    
+    <script>
+      setPersonalInfo();
+      setMarks();
+      //  Icons
+      feather.replace();
+      </script>    
+  </body>
 </html>

@@ -62,22 +62,22 @@ document.querySelector("#spinner").classList.remove("d-none");
 }
 
 function getPasOptions() {
-var form = new FormData();
-form.append("password", $("#oldPassword").val());
-form.append("newPassword", $("#newPassword").val());
+    var form = new FormData();
+    form.append("password", $("#oldPassword").val());
+    form.append("newPassword", $("#newPassword").val());
 
-return  {method:"post", body: form }
+    return  {method:"post", body: form }
 }
 
 function changePassword(e) {
-e.preventDefault();
-setErrorNote("ChangePassResponse", "");
-if ($("#newPassword").val() != $("#reNewPassword").val() ){
-    $("#newPassword").val("");
-    $("#reNewPassword").val("");
-    setErrorNote("ChangePassResponse", "Указанные новые пароли разные");
-    return
-}
+    e.preventDefault();
+    setErrorNote("ChangePassResponse", "");
+    if ($("#newPassword").val() != $("#reNewPassword").val() ){
+        $("#newPassword").val("");
+        $("#reNewPassword").val("");
+        setErrorNote("ChangePassResponse", "Указанные новые пароли разные");
+        return
+    }
 
 fetch('account/changePassword', getPasOptions()).then(r => {
     r.json().then( json =>{

@@ -67,11 +67,11 @@ type Marks struct {
 
 // ResponseMarks - оценки для фронта
 type ResponseMarks struct {
-	Department string
-	Subject    string
-	Rating     int
-	PassType   int
-	Semester   int
+	Subject  string
+	Rating   int
+	PassType int
+	Semester int
+	Repass   bool
 }
 
 // Article - статья

@@ -35,11 +35,10 @@ func (c *studentContext) StudentRequire(rw web.ResponseWriter, req *web.Request,
 
 func getStudentMarks(c *studentContext, rw web.ResponseWriter, req *web.Request) {
 
-	rows, err := g.DB.Query(`SELECT departments.shortname, subjects.name, marks.rating, subjects.passtype, marks.semester
+	rows, err := g.DB.Query(`SELECT subjects.name, marks.rating, subjects.passtype, marks.semester, marks.repass
 			  			   FROM students
 						   JOIN marks ON students.id = marks.id_student
 						   JOIN subjects ON marks.id_subject = subjects.id
-						   JOIN departments ON subjects.id_department = departments.id
 						   WHERE students.id = $1`, c.user.IDStudent)
 	if err != nil {
 		panic(fmt.Errorf("Ошибка. При выборке оценок пользователя(login - %v ): %v", c.user.Login, err.Error()))
@@ -50,7 +49,7 @@ func getStudentMarks(c *studentContext, rw web.ResponseWriter, req *web.Request)
 
 	for rows.Next() {
 		mark := t.ResponseMarks{}
-		err = rows.Scan(&mark.Department, &mark.Subject, &mark.Rating, &mark.PassType, &mark.Semester)
+		err = rows.Scan(&mark.Subject, &mark.Rating, &mark.PassType, &mark.Semester, &mark.Repass)
 		if err != nil {
 			panic(fmt.Errorf("Ошибка. При выборке оценок пользователя(login - %v ): %v", c.user.Login, err.Error()))
 		}
@@ -107,20 +106,17 @@ func addArticle(c *studentContext, rw web.ResponseWriter, req *web.Request) {
 	file, header, err := req.FormFile("article")
 	if err != nil {
 		c.response.Message = "Файл не получен"
-		rw.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	if filepath.Ext(header.Filename) != ".pdf" {
 		c.response.Message = "Файл должен иметь формат pdf"
-		rw.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	article, errStr := u.ValidateArticle(name, journal, biblioRecord, articleType)
 	if article == nil {
 		c.response.Message = errStr
-		rw.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
@@ -129,7 +125,6 @@ func addArticle(c *studentContext, rw web.ResponseWriter, req *web.Request) {
 	data, err := ioutil.ReadAll(file)
 	if err != nil {
 		c.response.Message = "Файл не получен"
-		rw.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
