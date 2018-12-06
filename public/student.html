@@ -4,8 +4,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    
+    <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
+    
     <link rel="icon" href="/img/favicon.ico">
     <title>Личный кабинет студента КФ МГТУ</title>
     <script src="/js/student.js"></script>
@@ -133,41 +140,25 @@
               </div>
             </div>
 
-            <div class=""id="div3" style="font-size: 18px;">
+            <div class="d-none" id="div3" style="font-size: 18px;">
                 <p class="h3 mb-4 font-weight-normal">Практики</p>
                 <p class="h5 mb-3 font-weight-normal d-none" id="noPracticesToShow">У вас нет практик</p>
-                <!-- <p class="h5 mt-4  text-primary">Семетр 1</p> -->
-                <!-- <table class="table table-bordered table-sm">
-                    <tbody>
-                      <tr>
-                          <th scope="row">Название</th>
-                          <td>Учебная</td>
-                      </tr>
-                      <tr>
-                        <th style="width:20%">Руководитель</th>
-                        <td>Гришунов Степан Сергеевич</td>
-    
-                      </tr>
-                      <tr>
-                        <th scope="row">Предпириятие</th>
-                        <td>ЗАО Астрал</td>
-                      </tr>
-                      <tr>
-                        <th scope="row">Дата</th>
-                        <td >с 30-12-1996 по 30-12-1996 </td>
-                      </tr>
-                      <tr>
-                          <th scope="row">Оценка</th>
-                          <td>5</td>
-                        </tr>
-                    </tbody>
-                  </table> -->
+              </div>
               
-           
-            </div>
-
-            <div class="d-none"id="div4" style="font-size: 18px;">
-              статьи
+              <div class=""id="div4" style="font-size: 18px;">
+                  <p class="h3 mb-4 font-weight-normal">Статьи</p>
+                  
+                  <p class="h5 mb-3 font-weight-normal d-none" id="noArticlesToShow">У вас нет статей</p>
+                <p class="h5 mb-3 font-weight-normal d-none" id="confirmedArticleTitle">Подтвержденные статьи</p>                
+                <table class="table">
+                  <tbody id="confirmedArticleTable">
+                  </tbody>
+                </table>  
+                <p class="h5 mb-3 font-weight-normal d-none" id="notConfirmedArticleTitle">Не подтвержденные статьи</p>
+                <table class="table">
+                  <tbody id="notConfirmedArticleTable">
+                  </tbody>
+                </table>  
               
             </div>
             <div class="d-none"id="div5" style="font-size: 18px;">
@@ -240,17 +231,73 @@
           </form>
         </div>
         </div>
+
+        
+        <div class="modal fade" id="article-modal" tabindex="-1" role="dialog" aria-labelledby="article-ModalLabel" aria-hidden="true">
+            <div class="modal-dialog " role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="article-ModalLabel">Статья</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                    <form id="articleForm"> 
+                        <div class="form-group row">
+                          <label for="article-name" class="col-3 col-form-label">Название</label>
+                          <div class="col-9">
+                                <textarea class="form-control" rows="3" id="article-name" disabled></textarea>
+                          </div>
+                        </div>
+                        <div class="form-group row">
+                          <label for="article-journal" class="col-3 col-form-label">Журнал</label>
+                          <div class="col-9">
+                              <textarea class="form-control" rows="3" id="article-journal" disabled ></textarea>
+                          </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="article-ref"  class="col-3 col-form-label">библиограф. ссылка</label>
+                            <div class="col-9">
+                                <textarea class="form-control" rows="5" id="article-ref" disabled >
+                                </textarea>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="article-type" class="col-3 col-form-label">Тип</label>
+                            <div class="col-9">
+                                <select class="form-control" id="article-type" disabled >
+                                    <option>Конференция</option>
+                                    <option>Конференция РИНЦ</option>
+                                    <option>Статья ВАК</option>
+                                    <option>Статья РИНЦ</option>
+                                    <option>Статья Scopus</option>
+                                    <option>Статья Web of Science</option>
+                                    </select>
+                            </div>
+                        </div>       
+                        <div class="d-flex " >
+                            <a href="" class="btn btn-info mr-auto" id="article-download">Скачать статью</a>
+              
+                            <button type="button" class="btn btn-secondary col-3" data-dismiss="modal">Close</button>
+                          </div>                 
+                      </form>
+                </div>
+
+              </div>
+            </div>
+      
         </main>
       </div>
     </div>
 
-    <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     
     <script>
       setPersonalInfo();
       setMarks();
       setPractices();
+      setArticles();
+      $('#article-modal').on('show.bs.modal',setHandlerForModalArticle);
       //  Icons
       feather.replace();
       </script>    

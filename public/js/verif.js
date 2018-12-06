@@ -107,6 +107,7 @@ function setArticlesToVerif() {
                 var newth = document.createElement('th');
                 var newtd = document.createElement('td');
                 var newa = document.createElement('a');
+                newth.style = "width:5%";
                 newth.innerHTML = count++;
                 newa.innerHTML = item.Team+" " + getShortName(item.FIO)+" "+item.Name;
                 newa.setAttribute("href", "");
@@ -131,6 +132,50 @@ function setArticlesToVerif() {
             }
     })});
 }
+function setCoursesForVerif() {
+    fetch('/verif/coursesForVerif').then(r => {
+        r.json().then( json =>{
+            checkAuth(json);
+            var a = json.Body;
+
+            const table = document.getElementById("courses-to-verif-table");
+            var count = 1;
+            
+            while (table.firstChild) {
+                table.removeChild(table.firstChild);
+            }
+            
+            json.Body.forEach(item => {
+                var newtr = document.createElement('tr');
+                var newth = document.createElement('th');
+                var newtd = document.createElement('td');
+                var newa = document.createElement('a');
+                newth.style = "width:5%";
+                newth.innerHTML = count++;
+                newa.innerHTML = item.Team+" " + getShortName(item.FIO)+" "+item.Theme;
+                newa.setAttribute("href", "");
+                newa.setAttribute("data-toggle", "modal");
+                newa.setAttribute("data-target", "#verif-course-modal");
+                newa.setAttribute("data-fio", item.FIO);
+                newa.setAttribute("data-team", item.Team);
+                newa.setAttribute("data-theme", item.Theme);
+                newa.setAttribute("data-semester", item.Semester);
+                newa.setAttribute("data-head", item.Head);
+                newa.setAttribute("data-rating", item.Rating);
+                newa.setAttribute("data-id", item.ID);
+                newa.setAttribute("data-subject", item.Subject);
+                newtd.appendChild(newa);
+                newtr.appendChild(newth);
+                newtr.appendChild(newtd);
+                table.appendChild(newtr);      
+                
+            })
+
+            if (count == 1){
+                $("#verifCourseResponse").removeClass("d-none");
+            }
+    })});
+}
 
 
 function getShortName(name) {
@@ -141,28 +186,103 @@ function getShortName(name) {
     return `${splitted[0]} ${splitted[1][0]}.${splitted[2][0]}.`;
 }
 
+function setHandlerForModalVerifCourse(event) {
+    var button = $(event.relatedTarget) // Кнопка, что спровоцировало модальное окно  
+
+    var fio = button.data('fio') 
+    var team = button.data('team') 
+    var theme = button.data('theme') 
+    var semester = button.data('semester') 
+    var head = button.data('head') 
+    var rating = button.data('rating') 
+    var id = button.data('id') 
+    var subject = button.data('subject') 
+
+    var modal = $(this)
+    modal.find('#verifCourseResponse').addClass("d-none")
+    modal.find('#verif-course-author').val(fio)
+    modal.find('#verif-course-team').val(team)
+    modal.find('#verif-course-theme').val(theme)
+    modal.find('#verif-course-head').val(head)
+    modal.find('#verif-course-semester').val(semester)
+    modal.find('#verif-course-rating').val(rating)
+    modal.find('#verif-course-subject').val(subject)
+    modal.find('#verif-course-cancel-btn').attr("onclick", "verifCourseCancel("+id+")")
+    modal.find('#verif-course-confirm-form').attr("onsubmit", "verifCourseConfirm(event,"+id+")")
+}
+
+function getCancelCourseOptions(id) {
+    var form = new FormData();
+    form.append("id", id);
+
+    return  {method:"post", body: form }
+}
+
+function verifCourseCancel(id) {
+    fetch('verif/cancelCourse', getCancelCourseOptions(id)).then(r => {
+        r.json().then( json =>{
+            checkAuth(json);
+            if (json.Сompleted){
+                setCoursesForVerif();
+                setSuccessNote("verifCourseResponse", json.Message);
+                $('#verif-course-modal').modal('hide'); 
+        } else{
+            setErrorNote("verifCourseResponse", json.Message);
+        }
+    })
+    }).catch(error => {
+            setErrorNote("verifCourseResponse","Ошибка на сервере, попробуйте позже.");   
+    });       
+}
+
+function getConfirmCourseOptions(id) {
+    var form = new FormData();
+    form.append("theme", $("#verif-course-theme").val());
+    form.append("id", id);
+
+    return  {method:"post", body: form }
+}
+
+function verifCourseConfirm(e, id) {
+    e.preventDefault();   
+    fetch('verif/course', getConfirmCourseOptions(id)).then(r => {
+        r.json().then( json =>{
+            checkAuth(json);
+            if (json.Сompleted){
+                setCoursesForVerif();
+                setSuccessNote("verifCourseResponse", json.Message);
+                $('#verif-course-modal').modal('hide'); 
+            } else{
+                setErrorNote("verifCourseResponse", json.Message);
+            }
+        })
+        }).catch(error => {
+                setErrorNote("verifCourseResponse","Ошибка на сервере, попробуйте позже.");   
+        }); 
+}
 
 function setHandlerForModalVerifArticle(event) {
-        var button = $(event.relatedTarget) // Кнопка, что спровоцировало модальное окно  
+    var button = $(event.relatedTarget) // Кнопка, что спровоцировало модальное окно  
 
-        var fio = button.data('fio') 
-        var team = button.data('team') 
-        var name = button.data('name') 
-        var journal = button.data('journal') 
-        var ref = button.data('ref') 
-        var type = button.data('type') 
-        var id = button.data('id') 
+    var fio = button.data('fio') 
+    var team = button.data('team') 
+    var name = button.data('name') 
+    var journal = button.data('journal') 
+    var ref = button.data('ref') 
+    var type = button.data('type') 
+    var id = button.data('id') 
 
-        var modal = $(this)
-        modal.find('#verif-article-author').val(fio)
-        modal.find('#verif-article-team').val(team)
-        modal.find('#verif-article-name').val(name)
-        modal.find('#verif-article-journal').val(journal)
-        modal.find('#verif-article-ref').val(ref)
-        modal.find('#verif-article-type').val(type)
-        modal.find('#verif-article-download').attr("href", "verif/article/"+id)
-        modal.find('#verif-article-cancel-btn').attr("onclick", "verifArticleCancel("+id+")")
-        modal.find('#verif-article-confirm-form').attr("onsubmit", "verifArticleConfirm(event,"+id+")")
+    var modal = $(this)
+    modal.find('#verifArticleResponse').addClass("d-none")
+    modal.find('#verif-article-author').val(fio)
+    modal.find('#verif-article-team').val(team)
+    modal.find('#verif-article-name').val(name)
+    modal.find('#verif-article-journal').val(journal)
+    modal.find('#verif-article-ref').val(ref)
+    modal.find('#verif-article-type').val(type)
+    modal.find('#verif-article-download').attr("href", "verif/article/"+id)
+    modal.find('#verif-article-cancel-btn').attr("onclick", "verifArticleCancel("+id+")")
+    modal.find('#verif-article-confirm-form').attr("onsubmit", "verifArticleConfirm(event,"+id+")")
 }
 
 function getCancelArticleOptions(id) {

@@ -111,6 +111,10 @@
           <div class="d-none"id="div2" style="font-size: 18px;">
               <p class="h5 mb-3 font-weight-normal">Подтверждение курсовых работ</p>
               <p class="h6 mb-3 font-weight-normal d-none" id="noCoursesForVerir">Курсовых работ для подтверждения нет</p>
+              <table class="table">
+                <tbody id="courses-to-verif-table">
+                </tbody>
+              </table>  
           </div>         
 
           <div class="d-none"id="div3" style="font-size: 18px;">
@@ -141,6 +145,8 @@
       </div>
     </div>
 
+
+
     <div class="modal fade" id="verif-article-modal" tabindex="-1" role="dialog" aria-labelledby="verif-article-ModalLabel" aria-hidden="true">
         <div class="modal-dialog " role="document">
           <div class="modal-content">
@@ -152,70 +158,133 @@
             </div>
             <div class="modal-body">
               <form id="verif-article-confirm-form"> 
-                      <div class="form-group row">
-                        <label for="verif-article-author" class="col-3 col-form-label">Автор</label>
-                        <div class="col-9">
-                          <input type="text" readonly class="form-control-plaintext" id="verif-article-author" value="">
-                        </div>
-                      </div>
-                      <div class="form-group row">
-                        <label for="verif-article-team" class="col-3 col-form-label">Группа</label>
-                        <div class="col-9">
-                          <input type="text" readonly class="form-control-plaintext" id="verif-article-team" value="">
-                        </div>
-                      </div>
-                      <div class="form-group row">
-                        <label for="verif-article-name" class="col-3 col-form-label">Название</label>
-                        <div class="col-9">
-                              <textarea class="form-control" rows="3" id="verif-article-name" required></textarea>
-                        </div>
-                      </div>
-                      <div class="form-group row">
-                        <label for="verif-article-journal" class="col-3 col-form-label">Журнал</label>
-                        <div class="col-9">
-                            <textarea class="form-control" rows="3" id="verif-article-journal" required></textarea>
-                        </div>
-                      </div>
-                      <div class="form-group row">
-                          <label for="verif-article-ref" class="col-3 col-form-label">библиограф. ссылка</label>
-                          <div class="col-9">
-                              <textarea class="form-control" rows="5" id="verif-article-ref" required>
-                              </textarea>
-                          </div>
-                      </div>
-                      <div class="form-group row">
-                          <label for="verif-article-type" class="col-3 col-form-label">Тип</label>
-                          <div class="col-9">
-                              <select class="form-control" id="verif-article-type" required>
-                                  <option>Конференция</option>
-                                  <option>Конференция РИНЦ</option>
-                                  <option>Статья ВАК</option>
-                                  <option>Статья РИНЦ</option>
-                                  <option>Статья Scopus</option>
-                                  <option>Статья Web of Science</option>
-                                  </select>
-                          </div>
-                      </div>       
-                      <div class="d-none" id="verifArticleResponse"></div>
-                      <div class="d-flex " >
-                          <a href="" class="btn btn-info mr-auto" id="verif-article-download">Скачать статью</a>
-            
-                          <button type="button" class="btn btn-danger mr-2" id="verif-article-cancel-btn">Отклонить</button>
-                          <button type="submit" class="btn btn-success">Принять</button>
-                        </div>                 
-                    </form>
+                <div class="form-group row">
+                  <label for="verif-article-author" class="col-3 col-form-label">Автор</label>
+                  <div class="col-9">
+                    <input type="text" readonly class="form-control-plaintext" id="verif-article-author" value="">
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label for="verif-article-team" class="col-3 col-form-label">Группа</label>
+                  <div class="col-9">
+                    <input type="text" readonly class="form-control-plaintext" id="verif-article-team" value="">
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label for="verif-article-name" class="col-3 col-form-label">Название</label>
+                  <div class="col-9">
+                        <textarea class="form-control" rows="3" id="verif-article-name" required></textarea>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label for="verif-article-journal" class="col-3 col-form-label">Журнал</label>
+                  <div class="col-9">
+                      <textarea class="form-control" rows="3" id="verif-article-journal" required></textarea>
+                  </div>
+                </div>
+                <div class="form-group row">
+                    <label for="verif-article-ref" class="col-3 col-form-label">библиограф. ссылка</label>
+                    <div class="col-9">
+                        <textarea class="form-control" rows="5" id="verif-article-ref" required>
+                        </textarea>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="verif-article-type" class="col-3 col-form-label">Тип</label>
+                    <div class="col-9">
+                        <select class="form-control" id="verif-article-type" required>
+                            <option>Конференция</option>
+                            <option>Конференция РИНЦ</option>
+                            <option>Статья ВАК</option>
+                            <option>Статья РИНЦ</option>
+                            <option>Статья Scopus</option>
+                            <option>Статья Web of Science</option>
+                            </select>
+                    </div>
+                </div>       
+                <div class="d-none" id="verifArticleResponse"></div>
+                <div class="d-flex " >
+                    <a href="" class="btn btn-info mr-auto" id="verif-article-download">Скачать статью</a>
+      
+                    <button type="button" class="btn btn-danger mr-2" id="verif-article-cancel-btn">Отклонить</button>
+                    <button type="submit" class="btn btn-success">Принять</button>
+                  </div>                 
+              </form>
             </div>
-          
-
-     
         </div>
       </div>
+    </div>
 
+
+    <div class="modal fade" id="verif-course-modal" tabindex="-1" role="dialog" aria-labelledby="verif-course-ModalLabel" aria-hidden="true">
+      <div class="modal-dialog " role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="verif-course-ModalLabel">Подтверждение курсовой</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form id="verif-course-confirm-form"> 
+              <div class="form-group row">
+                <label for="verif-course-head" class="col-3 col-form-label">Руководитель</label>
+                <div class="col-9">
+                    <input type="text" readonly class="form-control-plaintext" id="verif-course-head" value="">
+                </div>
+              </div>
+              <div class="form-group row">
+                      <label for="verif-course-author" class="col-3 col-form-label">Автор</label>
+                      <div class="col-9">
+                        <input type="text" readonly class="form-control-plaintext" id="verif-course-author" value="">
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label for="verif-course-team" class="col-3 col-form-label">Группа</label>
+                      <div class="col-9">
+                        <input type="text" readonly class="form-control-plaintext" id="verif-course-team" value="">
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label for="verif-course-subject" class="col-3 col-form-label">Предмет</label>
+                      <div class="col-9">
+                          <input type="text" readonly class="form-control-plaintext" id="verif-course-subject" value="">
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label for="verif-course-theme" class="col-3 col-form-label">Тема</label>
+                      <div class="col-9">
+                            <textarea class="form-control" rows="3" id="verif-course-theme" required></textarea>
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label for="verif-course-semester" class="col-2 col-form-label">Семестр</label>
+                      <div class="col-1">
+                          <input type="text" readonly class="form-control-plaintext" id="verif-course-semester" value="">
+                        </div>
+                        <label for="verif-course-rating" class="col-2 col-form-label">Оценка</label>
+                        <div class="col-1">
+                            <input type="text" readonly class="form-control-plaintext" id="verif-course-rating" value="">
+                      </div>
+                    </div>
+
+                    <div class="d-none" id="verifCourseResponse"></div>
+                    <div class="d-flex flex-row-reverse" >          
+                      <button type="submit" class="btn btn-success">Принять</button>
+                      <button type="button" class="btn btn-danger mr-2" id="verif-course-cancel-btn">Отклонить</button>
+                      </div>                 
+                  </form>
+          </div>
+          </div>
+          </div>
+          </div>
 
     <script>
         setPersonalInfo();
         setArticlesToVerif();
+        setCoursesForVerif();
         $('#verif-article-modal').on('show.bs.modal',setHandlerForModalVerifArticle);
+        $('#verif-course-modal').on('show.bs.modal',setHandlerForModalVerifCourse);
       //  Icons
       feather.replace();
     </script>    

@@ -233,3 +233,44 @@ func (c *studentContext) getPractices(rw web.ResponseWriter, req *web.Request) {
 	c.response.Body = practicesInfo
 	c.response.Сompleted = true
 }
+
+func (c *studentContext) getArticles(rw web.ResponseWriter, req *web.Request) {
+	rows, err := g.DB.Query(`SELECT id, name, journal, bibliorecord, type, confirmed 
+							 FROM articles
+							 WHERE id_student = $1`, c.user.IDStudent)
+	if err != nil {
+		panic(fmt.Errorf("Ошибка. При выборке статей: %v", err.Error()))
+	}
+	defer rows.Close()
+
+	articlesInfo := make([]*struct {
+		ID           int
+		Name         string
+		Journal      string
+		BiblioRecord string
+		ArticlType   string
+		Confirmed    bool
+	}, 0)
+
+	for rows.Next() {
+		articleInfo := new(struct {
+			ID           int
+			Name         string
+			Journal      string
+			BiblioRecord string
+			ArticlType   string
+			Confirmed    bool
+		})
+
+		err = rows.Scan(&articleInfo.ID, &articleInfo.Name, &articleInfo.Journal, &articleInfo.BiblioRecord,
+			&articleInfo.ArticlType, &articleInfo.Confirmed)
+		if err != nil {
+			panic(fmt.Errorf("Ошибка. При выборке статей: %v", err.Error()))
+		}
+
+		articlesInfo = append(articlesInfo, articleInfo)
+	}
+
+	c.response.Body = articlesInfo
+	c.response.Сompleted = true
+}

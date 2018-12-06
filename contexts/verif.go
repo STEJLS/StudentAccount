@@ -82,11 +82,61 @@ func (c *VerifContext) cancelArticle(rw web.ResponseWriter, req *web.Request) {
 
 	c.response.Сompleted = true
 	c.response.Body = "Статья успешно отклонена"
+}
 
+func (c *VerifContext) cancelCourse(rw web.ResponseWriter, req *web.Request) {
+	id, err := strconv.Atoi(req.FormValue("id"))
+	if err != nil {
+		c.response.Message = "id должно быть числом"
+		return
+	}
+
+	r, err := g.DB.Exec(`UPDATE courseworks 
+					   SET theme = null, confirmed = false  
+					   WHERE id = $1`, id)
+	if err != nil {
+		panic(fmt.Errorf("Ошибка. Во время отклонения курсовой работы: %v", err.Error()))
+	}
+
+	if n, _ := r.RowsAffected(); n == 0 {
+		c.response.Message = "C указанным id курсовой работы не существует"
+		return
+	}
+
+	c.response.Сompleted = true
+	c.response.Body = "Статья успешно отклонена"
+}
+
+func (c *VerifContext) confirmCourse(rw web.ResponseWriter, req *web.Request) {
+	theme := req.FormValue("theme")
+	if theme == "" {
+		c.response.Message = "Необходимо указать тему"
+		return
+	}
+
+	id, err := strconv.Atoi(req.FormValue("id"))
+	if err != nil {
+		c.response.Message = "id должно быть числом"
+		return
+	}
+
+	r, err := g.DB.Exec(`UPDATE courseworks 
+					   SET theme = $1, confirmed = true  
+					   WHERE id = $2`, theme, id)
+	if err != nil {
+		panic(fmt.Errorf("Ошибка. Во время подтверждения курсовой работы: %v", err.Error()))
+	}
+
+	if n, _ := r.RowsAffected(); n == 0 {
+		c.response.Message = "C указанным id курсовой работы не существует"
+		return
+	}
+
+	c.response.Сompleted = true
+	c.response.Body = "Курсовая работа успешно подтверждена"
 }
 
 func (c *VerifContext) confirmArticle(rw web.ResponseWriter, req *web.Request) {
-
 	article, errStr := u.ValidateArticle(req.FormValue("name"), req.FormValue("journal"), req.FormValue("biblioRecord"), req.FormValue("type"))
 	if article == nil {
 		c.response.Message = errStr
@@ -114,7 +164,6 @@ func (c *VerifContext) confirmArticle(rw web.ResponseWriter, req *web.Request) {
 
 	c.response.Сompleted = true
 	c.response.Body = "Статья успешно подтверждена"
-
 }
 
 func (c *VerifContext) articlesForVerif(rw web.ResponseWriter, req *web.Request) {
@@ -163,5 +212,57 @@ func (c *VerifContext) articlesForVerif(rw web.ResponseWriter, req *web.Request)
 	}
 
 	c.response.Body = articlesInfo
+	c.response.Сompleted = true
+}
+
+func (c *VerifContext) coursesForVerif(rw web.ResponseWriter, req *web.Request) {
+	rows, err := g.DB.Query(`SELECT subj.name, cw.id, u.fullname, (s.team||'-'|| s.teamnumber) as team, 
+								cw.semester, cw.theme, cw.head, cw.rating FROM courseworks as cw
+							JOIN students s ON s.id = cw.id_student
+							JOIN users u ON u.id_student = s.id
+							JOIN subjects subj ON subj.id = cw.id_subject
+							WHERE confirmed = false AND cw.theme IS NOT NULL
+							AND cw.id_student IN (
+								SELECT id FROM students where id_field in(
+								SELECT id FROM fieldsofstudy WHERE id_department = $1))`,
+		c.user.IDDepartment)
+	if err != nil {
+		panic(fmt.Errorf("Ошибка. При выборке практик: %v", err.Error()))
+	}
+	defer rows.Close()
+
+	practicesInfo := make([]*struct {
+		ID       int
+		Subject  string
+		FIO      string
+		Team     string
+		Semester int
+		Theme    string
+		Head     string
+		Rating   int
+	}, 0)
+
+	for rows.Next() {
+		practiceInfo := new(struct {
+			ID       int
+			Subject  string
+			FIO      string
+			Team     string
+			Semester int
+			Theme    string
+			Head     string
+			Rating   int
+		})
+
+		err = rows.Scan(&practiceInfo.Subject, &practiceInfo.ID, &practiceInfo.FIO, &practiceInfo.Team, &practiceInfo.Semester,
+			&practiceInfo.Theme, &practiceInfo.Head, &practiceInfo.Rating)
+		if err != nil {
+			panic(fmt.Errorf("Ошибка. При выборке практик: %v", err.Error()))
+		}
+
+		practicesInfo = append(practicesInfo, practiceInfo)
+	}
+
+	c.response.Body = practicesInfo
 	c.response.Сompleted = true
 }

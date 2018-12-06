@@ -275,3 +275,74 @@ function setPractices() {
             }
     })});
 }
+
+function setArticles() {
+    fetch('/student/articles').then(r => {
+        r.json().then( json =>{
+            checkAuth(json);
+            var a = json.Body;
+
+            const confirmedTable = document.getElementById("confirmedArticleTable");
+            const notConfirmedTable = document.getElementById("notConfirmedArticleTable");
+            var confCount = 1;
+            var noConfCount = 1;
+            
+            while (confirmedTable.firstChild) {
+                confirmedTable.removeChild(confirmedTable.firstChild);
+            }
+            while (notConfirmedTable.firstChild) {
+                notConfirmedTable.removeChild(notConfirmedTable.firstChild);
+            }
+            
+            json.Body.forEach(item => {
+                var newtr = document.createElement('tr');
+                var newth = document.createElement('th');
+                var newtd = document.createElement('td');
+                var newa = document.createElement('a');
+                newth.style = "width:5%";
+                newa.innerHTML = item.Name;
+                newa.setAttribute("href", "");
+                newa.setAttribute("data-toggle", "modal");
+                newa.setAttribute("data-target", "#article-modal");
+                newa.setAttribute("data-name", item.Name);
+                newa.setAttribute("data-journal", item.Journal);
+                newa.setAttribute("data-ref", item.BiblioRecord);
+                newa.setAttribute("data-type", item.ArticlType);
+                newa.setAttribute("data-id", item.ID);
+                newtd.appendChild(newa);
+                newtr.appendChild(newth);
+                newtr.appendChild(newtd);
+
+                if (item.Confirmed){
+                    $("#confirmedArticleTitle").removeClass("d-none");
+                    newth.innerHTML = confCount++;
+                    confirmedTable.appendChild(newtr);      
+                }else{
+                    $("#notConfirmedArticleTitle").removeClass("d-none");
+                    newth.innerHTML = noConfCount++;
+                    notConfirmedTable.appendChild(newtr);                     
+                }        
+            })
+
+            if (confCount == 1 && noConfCount == 1){
+                $("#noArticlesToShow").removeClass("d-none");
+            }
+    })});
+}
+
+function setHandlerForModalArticle(event) {
+    console.log("fd");
+    var button = $(event.relatedTarget) // Кнопка, что спровоцировало модальное окно  
+    var name = button.data('name') 
+    var journal = button.data('journal') 
+    var ref = button.data('ref') 
+    var type = button.data('type') 
+    var id = button.data('id') 
+
+    var modal = $(this)
+    modal.find('#article-name').val(name)
+    modal.find('#article-journal').val(journal)
+    modal.find('#article-ref').val(ref)
+    modal.find('#article-type').val(type)
+    modal.find('#article-download').attr("href", "student/article/"+id)
+}
