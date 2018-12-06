@@ -351,6 +351,9 @@ func addPracticisFromCSV(c *UserContext, rw web.ResponseWriter, req *web.Request
 				panic(fmt.Errorf("Ошибка. При откате транзакции для добавлении практик: %v", err.Error()))
 			}
 			if pe, ok := err.(*pq.Error); ok { // Нарушение уникальности, // Нет такой кафедры
+				if pe.Code == "23505" {
+					c.response.Message = fmt.Sprintf("Запись под номером %v нарушает уникальность", i+1)
+				}
 				if pe.Code == "23502" {
 					c.response.Message = fmt.Sprintf("В записи под номером %v указан неверный номер студента", i+1)
 				}

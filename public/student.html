@@ -46,44 +46,38 @@
               <li class="nav-item" onclick="disp('div1')">
                 <a class="nav-link" href="#">
                   <span data-feather="user-check"></span>
-                  Успеваемость
+                  Личная информация
                   <span class="sr-only">(current)</span>
                 </a>
               </li>
               <li class="nav-item" onclick="disp('div2')">
                 <a class="nav-link" href="#">
-                  <span data-feather="align-left"></span>
-                  Личная информация
+                  <span data-feather="align-left"></span>             
+                  Успеваемость
                 </a>
               </li>
               <li class="nav-item" onclick="disp('div3')">
                 <a class="nav-link" href="#">
                   <span data-feather="layers"></span>
-                  Добавить статью 
+                  Практики
                 </a>
               </li>
               <li class="nav-item" onclick="disp('div4')">
                 <a class="nav-link" href="#">
                   <span data-feather="move"></span>
-                  4
+                  Статьи
                 </a>
               </li>
               <li class="nav-item" onclick="disp('div5')">
                   <a class="nav-link" href="#">
                     <span data-feather="users"></span>
-                    5
+                    Курсовые работы
                   </a>
               </li>
               <li class="nav-item" onclick="disp('div6')">
                   <a class="nav-link" href="#">
                     <span data-feather="inbox"></span>
-                    6
-                  </a>
-              </li>
-              <li class="nav-item" onclick="disp('div7')">
-                  <a class="nav-link" href="#">
-                    <span data-feather="file"></span>
-                    7
+                    Добавление статьи
                   </a>
               </li>
             </ul>          
@@ -91,32 +85,12 @@
         </nav>
 
         <main role="main" class="col-md-9 ml-sm-auto col-lg-9 pb-4 px-5 bg-light pt-4">
-          <div class="" id="div1">
-            <div class="container">
-                <span class="h4" id="">Успеваемость</span>
-              <table class="table mt-4">
-                <thead>
-                  <tr>
-                    <th>Предмет</th>
-                    <th>Оценка</th>
-                    <th>Тип сдачи</th>
-                    <th>Пересдача</th>
-                    <th>Семестр</th>          
-                  </tr>
-                </thead>
-                <tbody id="progress"> 
-                  
-                </tbody>
-              </table>
-
-            </div>
-          </div>
-
-          <div class="d-none"id="div2" style="font-size: 18px;">
-            <div class="container">
+          
+          <div class="d-none"id="div1" style="font-size: 18px;">
+              <div class="container">
                 <span class="h4" id="fio"></span>
                 <table class="table  mt-4">
-                    <tbody>
+                  <tbody>
                       <tr>
                         <th scope="row">Факультет</th>
                         <td id="faculty"></td>
@@ -135,16 +109,77 @@
                       </tr>
                     </tbody>
                   </table>
-                  </div>
+                </div>
             </div>
-          
+            
+            <div class="d-none" id="div2">
+              <div class="container">
+                <p class="h3 mb-4 font-weight-normal">Успеваемость</p>
+                <table class="table mt-4">
+                  <thead>
+                    <tr>
+                      <th>Предмет</th>
+                      <th>Оценка</th>
+                      <th>Тип сдачи</th>
+                      <th>Пересдача</th>
+                      <th>Семестр</th>          
+                    </tr>
+                  </thead>
+                  <tbody id="progress"> 
+                    
+                  </tbody>
+                </table>
+  
+              </div>
+            </div>
 
-          <div class="d-none"id="div3" style="font-size: 18px;">
-           <div class="container col-12">
+            <div class=""id="div3" style="font-size: 18px;">
+                <p class="h3 mb-4 font-weight-normal">Практики</p>
+                <p class="h5 mb-3 font-weight-normal d-none" id="noPracticesToShow">У вас нет практик</p>
+                <!-- <p class="h5 mt-4  text-primary">Семетр 1</p> -->
+                <!-- <table class="table table-bordered table-sm">
+                    <tbody>
+                      <tr>
+                          <th scope="row">Название</th>
+                          <td>Учебная</td>
+                      </tr>
+                      <tr>
+                        <th style="width:20%">Руководитель</th>
+                        <td>Гришунов Степан Сергеевич</td>
+    
+                      </tr>
+                      <tr>
+                        <th scope="row">Предпириятие</th>
+                        <td>ЗАО Астрал</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">Дата</th>
+                        <td >с 30-12-1996 по 30-12-1996 </td>
+                      </tr>
+                      <tr>
+                          <th scope="row">Оценка</th>
+                          <td>5</td>
+                        </tr>
+                    </tbody>
+                  </table> -->
+              
+           
+            </div>
+
+            <div class="d-none"id="div4" style="font-size: 18px;">
+              статьи
+              
+            </div>
+            <div class="d-none"id="div5" style="font-size: 18px;">
+              курсачи
+            </div>
+
+            <div class="d-none"id="div6" style="font-size: 18px;">
+                <div class="container col-12">
             <h1 class="h3 mb-4 font-weight-normal">Добавить статью</h1>
             <form onsubmit="createArticle(event)">
               <div class="form-group row">
-                  <label for="login" class="col-3 col-form-label">Название статьи</label>
+                <label for="login" class="col-3 col-form-label">Название статьи</label>
                   <div class="col-9">
                       <input type="text" class="form-control" id="articleName" placeholder="Название статьи" required autofocus >
                   </div>
@@ -215,6 +250,7 @@
     <script>
       setPersonalInfo();
       setMarks();
+      setPractices();
       //  Icons
       feather.replace();
       </script>    

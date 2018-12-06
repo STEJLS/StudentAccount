@@ -120,6 +120,7 @@ CREATE TABLE practicis
     rating smallint,
     FOREIGN KEY(id_student) REFERENCES students(id)
 );
+ALTER TABLE practicis ADD UNIQUE(id_student,semester)
 
 CREATE TABLE courseworks
 (

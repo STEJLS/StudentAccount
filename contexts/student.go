@@ -192,3 +192,44 @@ func addCourseWorkName(c *studentContext, rw web.ResponseWriter, req *web.Reques
 	c.response.Сompleted = true
 	c.response.Message = "Тема курсовой работы успешно добавлена"
 }
+
+func (c *studentContext) getPractices(rw web.ResponseWriter, req *web.Request) {
+	rows, err := g.DB.Query(`SELECT semester, name, head, company,
+							 'c '||to_char(begin_date, 'DD-MM-YYYY') || ' по ' || to_char(end_date, 'DD-MM-YYYY'), rating
+							FROM practicis WHERE id_student = $1 ORDER BY semester`, c.user.IDStudent)
+	if err != nil {
+		panic(fmt.Errorf("Ошибка. При выборке практик: %v", err.Error()))
+	}
+	defer rows.Close()
+
+	practicesInfo := make([]*struct {
+		Semester int
+		Name     string
+		Head     string
+		Company  string
+		Date     string
+		Rating   int
+	}, 0)
+
+	for rows.Next() {
+		practiceInfo := new(struct {
+			Semester int
+			Name     string
+			Head     string
+			Company  string
+			Date     string
+			Rating   int
+		})
+
+		err = rows.Scan(&practiceInfo.Semester, &practiceInfo.Name, &practiceInfo.Head, &practiceInfo.Company,
+			&practiceInfo.Date, &practiceInfo.Rating)
+		if err != nil {
+			panic(fmt.Errorf("Ошибка. При выборке практик: %v", err.Error()))
+		}
+
+		practicesInfo = append(practicesInfo, practiceInfo)
+	}
+
+	c.response.Body = practicesInfo
+	c.response.Сompleted = true
+}

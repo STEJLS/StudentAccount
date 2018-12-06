@@ -182,3 +182,96 @@ function setMarks() {
             })
     })});
 }
+
+function setPractices() {
+    fetch('/student/practices').then(r => {
+        r.json().then( json =>{
+            checkAuth(json);
+            var a = json.Body;
+
+            const allPractices = document.getElementById("div3");
+            var count = 1;
+
+            json.Body.forEach(item => {
+                var newp = document.createElement('p');
+                newp.classList.add("h5", "mt-4", "text-primary" );
+                newp.innerHTML = "Семетр " + item.Semester; 
+                allPractices.appendChild(newp);
+
+                var newTable = document.createElement('table');
+                newTable.classList.add("table", "table-bordered", "table-sm");
+                
+                var newTbody = document.createElement('tbody');
+                
+                var newTr = document.createElement('tr');
+                var newTh = document.createElement('th');
+                var newTd = document.createElement('td');
+
+                newTh.innerHTML = "Название";
+                newTh.style = "width:20%";
+                newTd.innerHTML = item.Name;
+
+                newTr.appendChild(newTh);
+                newTr.appendChild(newTd);                
+
+                newTbody.appendChild(newTr);
+
+                newTr = document.createElement('tr');
+                newTh = document.createElement('th');
+                newTd = document.createElement('td');
+
+                newTh.innerHTML = "Руководитель";
+                newTd.innerHTML = item.Head;
+
+                newTr.appendChild(newTh);
+                newTr.appendChild(newTd);                
+
+                newTbody.appendChild(newTr);
+
+                newTr = document.createElement('tr');
+                newTh = document.createElement('th');
+                newTd = document.createElement('td');
+
+                newTh.innerHTML = "Предпириятие";
+                newTd.innerHTML = item.Company;
+
+                newTr.appendChild(newTh);
+                newTr.appendChild(newTd);                
+
+                newTbody.appendChild(newTr);
+                
+                newTr = document.createElement('tr');
+                newTh = document.createElement('th');
+                newTd = document.createElement('td');
+
+                newTh.innerHTML = "Дата";
+                newTd.innerHTML = item.Date;
+
+                newTr.appendChild(newTh);
+                newTr.appendChild(newTd);                
+
+                newTbody.appendChild(newTr);
+                
+                newTr = document.createElement('tr');
+                newTh = document.createElement('th');
+                newTd = document.createElement('td');
+
+                newTh.innerHTML = "Оценка";
+                newTd.innerHTML = item.Rating;
+
+                newTr.appendChild(newTh);
+                newTr.appendChild(newTd);                
+
+                newTbody.appendChild(newTr);
+
+                newTable.appendChild(newTbody);
+                allPractices.appendChild(newTable);
+     
+                count++;
+            })
+
+            if (count == 1){
+                $("#noPracticesToShow").removeClass("d-none");
+            }
+    })});
+}

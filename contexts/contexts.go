@@ -213,6 +213,7 @@ func GetRoots() *web.Router {
 		Get("/marks", getStudentMarks).
 		Get("/info", getStudentInfo).
 		Get("/article/:article_id", (*studentContext).getArticle).
+		Get("/practices", (*studentContext).getPractices).
 		Post("/article", addArticle).
 		Post("/courseWork", addCourseWorkName)
 	return rootRouter
