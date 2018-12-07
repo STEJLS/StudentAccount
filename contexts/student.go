@@ -158,13 +158,11 @@ func addCourseWorkName(c *studentContext, rw web.ResponseWriter, req *web.Reques
 	id, err := strconv.Atoi(req.FormValue("id"))
 	if err != nil {
 		c.response.Message = "Укажите верный id курсовой работы"
-		rw.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	if theme == "" {
 		c.response.Message = "Укажите верную тему курсовой работы"
-		rw.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
@@ -172,7 +170,6 @@ func addCourseWorkName(c *studentContext, rw web.ResponseWriter, req *web.Reques
 	err = g.DB.QueryRow(`SELECT confirmed FROM courseworks WHERE id = $1`, id).Scan(&confirmed)
 	if err == sql.ErrNoRows {
 		c.response.Message = "Курсовой работы с указанным id не существует"
-		rw.WriteHeader(http.StatusBadRequest)
 		return
 	} else if err != nil {
 		panic(fmt.Errorf("Ошибка. При выборке курсовой работы с id = %v в БД: %v", id, err.Error()))
@@ -185,7 +182,6 @@ func addCourseWorkName(c *studentContext, rw web.ResponseWriter, req *web.Reques
 		}
 	} else {
 		c.response.Message = "Нельзя изменить название подтвержденной курсовой работы"
-		rw.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
@@ -272,5 +268,55 @@ func (c *studentContext) getArticles(rw web.ResponseWriter, req *web.Request) {
 	}
 
 	c.response.Body = articlesInfo
+	c.response.Сompleted = true
+}
+
+func (c *studentContext) getCourses(rw web.ResponseWriter, req *web.Request) {
+	rows, err := g.DB.Query(`SELECT subj.name, cw.id, u.fullname, (s.team||'-'|| s.teamnumber) as team, 
+								cw.semester, cw.theme, cw.head, cw.rating, cw.confirmed FROM courseworks as cw
+							JOIN students s ON s.id = cw.id_student
+							JOIN users u ON u.id_student = s.id
+							JOIN subjects subj ON subj.id = cw.id_subject							
+							WHERE cw.id_student = $1`, c.user.IDStudent)
+	if err != nil {
+		panic(fmt.Errorf("Ошибка. При выборке курсовых работ: %v", err.Error()))
+	}
+	defer rows.Close()
+
+	coursesInfo := make([]*struct {
+		ID        int
+		Subject   string
+		FIO       string
+		Team      string
+		Semester  int
+		Theme     sql.NullString
+		Head      string
+		Rating    int
+		Confirmed bool
+	}, 0)
+
+	for rows.Next() {
+		courseInfo := new(struct {
+			ID        int
+			Subject   string
+			FIO       string
+			Team      string
+			Semester  int
+			Theme     sql.NullString
+			Head      string
+			Rating    int
+			Confirmed bool
+		})
+
+		err = rows.Scan(&courseInfo.Subject, &courseInfo.ID, &courseInfo.FIO, &courseInfo.Team, &courseInfo.Semester,
+			&courseInfo.Theme, &courseInfo.Head, &courseInfo.Rating, &courseInfo.Confirmed)
+		if err != nil {
+			panic(fmt.Errorf("Ошибка. При выборке курсовых работ: %v", err.Error()))
+		}
+
+		coursesInfo = append(coursesInfo, courseInfo)
+	}
+
+	c.response.Body = coursesInfo
 	c.response.Сompleted = true
 }

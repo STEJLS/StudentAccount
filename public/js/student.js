@@ -330,6 +330,74 @@ function setArticles() {
     })});
 }
 
+function setCourse() {
+    fetch('/student/courses').then(r => {
+        r.json().then( json =>{
+            checkAuth(json);
+            var a = json.Body;
+
+            const setThemeCourseTable = document.getElementById("setThemeCourseTable");
+            const courseTable = document.getElementById("courseTable");
+            const notConfirmedCourseTable = document.getElementById("notConfirmedCourseTable");
+            var setThemeCount = 1;
+            var courseCount = 1;
+            var noConfCount = 1;
+            
+            while (setThemeCourseTable.firstChild) {
+                setThemeCourseTable.removeChild(setThemeCourseTable.firstChild);
+            }
+            while (courseTable.firstChild) {
+                courseTable.removeChild(courseTable.firstChild);
+            }
+            while (notConfirmedCourseTable.firstChild) {
+                notConfirmedCourseTable.removeChild(notConfirmedCourseTable.firstChild);
+            }
+            
+            json.Body.forEach(item => {
+                var newtr = document.createElement('tr');
+                var newth = document.createElement('th');
+                var newtd = document.createElement('td');
+                var newa = document.createElement('a');
+                newth.style = "width:5%";
+                newa.innerHTML = item.Subject;
+                newa.setAttribute("href", "");
+                newa.setAttribute("data-toggle", "modal");
+                newa.setAttribute("data-target", "#verif-course-modal");
+                newa.setAttribute("data-fio", item.FIO);
+                newa.setAttribute("data-team", item.Team);
+                newa.setAttribute("data-theme", item.Theme.String);
+                newa.setAttribute("data-semester", item.Semester);
+                newa.setAttribute("data-head", item.Head);
+                newa.setAttribute("data-rating", item.Rating);
+                newa.setAttribute("data-id", item.ID);
+                newa.setAttribute("data-subject", item.Subject);
+                newa.setAttribute("data-confirmed", item.Confirmed);
+                newtd.appendChild(newa);
+                newtr.appendChild(newth);
+                newtr.appendChild(newtd);
+         
+
+                if (item.Confirmed && item.Theme.String!=""){
+                    $("#courseTitle").removeClass("d-none");
+                    newth.innerHTML = courseCount++;
+                    courseTable.appendChild(newtr);      
+                }else if (!item.Confirmed && item.Theme.String!=""){
+                    $("#notConfirmedCourseTitle").removeClass("d-none");
+                    newth.innerHTML = noConfCount++;
+                    notConfirmedCourseTable.appendChild(newtr);                     
+                }else{
+                    $("#setThemeCourseTitle").removeClass("d-none");
+                    newth.innerHTML = setThemeCount++;
+                    setThemeCourseTable.appendChild(newtr);                     
+                }
+            })
+
+            if (courseCount == 1 && noConfCount == 1 && setThemeCount == 1){
+                $("#noCoursesToShow").removeClass("d-none");
+            }
+    })});
+}
+
 function setHandlerForModalArticle(event) {
     console.log("fd");
     var button = $(event.relatedTarget) // Кнопка, что спровоцировало модальное окно  
@@ -345,4 +413,64 @@ function setHandlerForModalArticle(event) {
     modal.find('#article-ref').val(ref)
     modal.find('#article-type').val(type)
     modal.find('#article-download').attr("href", "student/article/"+id)
+}
+
+function setHandlerForModalVerifCourse(event) {
+    var button = $(event.relatedTarget) // Кнопка, что спровоцировало модальное окно  
+
+    var fio = button.data('fio') 
+    var team = button.data('team') 
+    var theme = button.data('theme') 
+    var semester = button.data('semester') 
+    var head = button.data('head') 
+    var rating = button.data('rating') 
+    var id = button.data('id') 
+    var subject = button.data('subject') 
+    
+    var modal = $(this)
+
+    modal.find('#verif-course-theme').val(theme);
+    if(theme != ""){
+        console.log("dsd");
+        document.getElementById("submitCourseBTN").classList.add('d-none');
+        document.getElementById("verif-course-ModalLabel").innerHTML = "Курсовая работа";
+        modal.find('#verif-course-theme').attr("readonly","readonly");
+    }else{        
+        $('#verif-course-theme').removeAttr("readonly");
+    }
+
+    modal.find('#verifCourseResponse').addClass("d-none");
+    modal.find('#verif-course-author').val(fio);
+    modal.find('#verif-course-team').val(team);
+    modal.find('#verif-course-head').val(head);
+    modal.find('#verif-course-semester').val(semester);
+    modal.find('#verif-course-rating').val(rating);
+    modal.find('#verif-course-subject').val(subject);
+    modal.find('#verif-course-confirm-form').attr("onsubmit", "studentCourseConfirm(event,"+id+")");
+}
+
+function getConfirmCourseOptions(id) {
+    var form = new FormData();
+    form.append("theme", $("#verif-course-theme").val());
+    form.append("id", id);
+
+    return  {method:"post", body: form }
+}
+
+function studentCourseConfirm(e, id) {
+    e.preventDefault();   
+    fetch('student/courseWork', getConfirmCourseOptions(id)).then(r => {
+        r.json().then( json =>{
+            checkAuth(json);
+            if (json.Сompleted){
+                setCourse();
+                setSuccessNote("verifCourseResponse", json.Message);
+                $('#verif-course-modal').modal('hide'); 
+            } else{
+                setErrorNote("verifCourseResponse", json.Message);
+            }
+        })
+        }).catch(error => {
+                setErrorNote("verifCourseResponse","Ошибка на сервере, попробуйте позже.");   
+        }); 
 }

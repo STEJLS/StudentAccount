@@ -227,11 +227,11 @@ func (c *VerifContext) coursesForVerif(rw web.ResponseWriter, req *web.Request) 
 								SELECT id FROM fieldsofstudy WHERE id_department = $1))`,
 		c.user.IDDepartment)
 	if err != nil {
-		panic(fmt.Errorf("Ошибка. При выборке практик: %v", err.Error()))
+		panic(fmt.Errorf("Ошибка. При выборке курсовых работ: %v", err.Error()))
 	}
 	defer rows.Close()
 
-	practicesInfo := make([]*struct {
+	coursesInfo := make([]*struct {
 		ID       int
 		Subject  string
 		FIO      string
@@ -243,7 +243,7 @@ func (c *VerifContext) coursesForVerif(rw web.ResponseWriter, req *web.Request) 
 	}, 0)
 
 	for rows.Next() {
-		practiceInfo := new(struct {
+		courseInfo := new(struct {
 			ID       int
 			Subject  string
 			FIO      string
@@ -254,15 +254,15 @@ func (c *VerifContext) coursesForVerif(rw web.ResponseWriter, req *web.Request) 
 			Rating   int
 		})
 
-		err = rows.Scan(&practiceInfo.Subject, &practiceInfo.ID, &practiceInfo.FIO, &practiceInfo.Team, &practiceInfo.Semester,
-			&practiceInfo.Theme, &practiceInfo.Head, &practiceInfo.Rating)
+		err = rows.Scan(&courseInfo.Subject, &courseInfo.ID, &courseInfo.FIO, &courseInfo.Team, &courseInfo.Semester,
+			&courseInfo.Theme, &courseInfo.Head, &courseInfo.Rating)
 		if err != nil {
-			panic(fmt.Errorf("Ошибка. При выборке практик: %v", err.Error()))
+			panic(fmt.Errorf("Ошибка. При выборке курсовых работ: %v", err.Error()))
 		}
 
-		practicesInfo = append(practicesInfo, practiceInfo)
+		coursesInfo = append(coursesInfo, courseInfo)
 	}
 
-	c.response.Body = practicesInfo
+	c.response.Body = coursesInfo
 	c.response.Сompleted = true
 }
