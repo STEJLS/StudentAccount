@@ -20,7 +20,6 @@ import (
 type Context struct {
 	response t.ResponseMessage
 	user     t.User
-	notJSON  bool
 }
 
 // UserContext - контекст пользователя
@@ -140,13 +139,15 @@ func (c *Context) panicHandler(rw web.ResponseWriter, req *web.Request, err inte
 func (c *Context) toJSON(rw web.ResponseWriter, req *web.Request, next web.NextMiddlewareFunc) {
 	next(rw, req)
 
-	if !c.notJSON {
-		rw.Header().Add("Content-type", "application/json;")
-		rw.Header().Add("Access-Control-Allow-Origin", "*")
-		_, err := rw.Write(u.ConvertToJSON(c.response))
-		if err != nil {
-			panic(fmt.Errorf("Ошибка. При отдачи: %v", err.Error()))
-		}
+	if rw.Size() != 0 || rw.StatusCode() == http.StatusNotModified { // отдача статики
+		return
+	}
+
+	rw.Header().Add("Content-type", "application/json;")
+	rw.Header().Add("Access-Control-Allow-Origin", "*")
+	_, err := rw.Write(u.ConvertToJSON(c.response))
+	if err != nil {
+		panic(fmt.Errorf("Ошибка. При отдачи: %v", err.Error()))
 	}
 }
 

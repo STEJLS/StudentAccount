@@ -76,10 +76,10 @@ func GenerateMD5hash(password string) string {
 }
 
 // initgDB - инициализирует базу данных начальными значениями
-func InitDB(login string, password string) {
+func InitDB(config XMLconfig.Config) {
 	_, err := g.DB.Exec(`INSERT INTO users (login, password, role, isActivated) 
 					   VALUES ($1, $2, 0, true) ON CONFLICT (login) 
-					   DO UPDATE SET password = $2`, login, GenerateMD5hash(password))
+					   DO UPDATE SET password = $2`, config.Admin.Login, GenerateMD5hash(config.Admin.Password))
 	if err != nil {
 		log.Fatalf("Фатал.Ошибка при создании админа: %v", err.Error())
 	}

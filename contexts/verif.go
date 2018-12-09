@@ -54,7 +54,6 @@ func (c *Context) getArticle(rw web.ResponseWriter, req *web.Request) {
 	rw.Header().Add("Content-Length", fmt.Sprintf("%v", len(data)))
 
 	rw.Write(data)
-	c.notJSON = true
 }
 
 func (c *VerifContext) cancelArticle(rw web.ResponseWriter, req *web.Request) {

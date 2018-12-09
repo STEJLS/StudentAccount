@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	xmlc "github.com/STEJLS/StudentAccount/XMLconfig"
@@ -20,7 +21,7 @@ func main() {
 	u.ConnectToDB(config.DB)
 	defer g.DB.Close()
 
-	u.InitDB(config.Admin.Login, config.Admin.Password)
+	u.InitDB(config)
 
-	http.ListenAndServe("127.0.0.1:3000", ctx.GetRoots())
+	http.ListenAndServe(fmt.Sprintf("%v:%v", config.HTTP.Host, config.HTTP.Port), ctx.GetRoots())
 }

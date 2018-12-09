@@ -463,7 +463,6 @@ func getTempPasswords(c *UserContext, rw web.ResponseWriter, req *web.Request) {
 	rw.Header().Add("Content-Length", fmt.Sprintf("%v", len(data)))
 
 	rw.Write(data)
-	c.notJSON = true
 }
 
 func createVerif(c *UserContext, rw web.ResponseWriter, req *web.Request) {
