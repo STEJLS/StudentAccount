@@ -17,11 +17,3 @@ level
 
 Курсачи
 номер студента; название кафедры;код направления подготовки;предмет; еще тема; руководитель; оценка: семестр
-
-SELECT * FROM articles 
-	where confirmed = false 
-		AND id_student IN (
-			SELECT id FROM students where id_field in(
-				SELECT id FROM fieldsofstudy WHERE id_department = 110
-			)			
-		)

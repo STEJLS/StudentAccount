@@ -139,13 +139,5 @@ CREATE TABLE courseworks
 ALTER TABLE courseworks ADD UNIQUE(id_subject,semester)
 
 
-
-
-
-INSERT INTO courseworks(id_student,id_subject,semester,theme,head,rating) 
-VALUES( (SELECT id FROM students WHERE number = '15Ф041'), 
-	(SELECT id FROM subjects WHERE id_field = (SELECT id FROM fieldsOfStudy WHERE id_department = (SELECT id FROM departments WHERE name = 
-														 'Программное обеспечение ЭВМ, информационные технологии')
-	 AND code = '09.03.04'
-	 ) AND name='ТОБД'), 1,'Тема','Пупкин',5
-)
+-- команда создания скрипта БД
+-- pg_dump.exe --host=localhost --port=5432 --username=postgres --schema-only --file=D:\schChema.sql bmstu

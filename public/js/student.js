@@ -18,9 +18,9 @@ fetch('account/logout',{method:"post"})
             window.location.href = "index.html";
         })
     )
-    .catch(e => {
-        console.log("Произошла ошибка на сервере.");
-    })
+    .catch(() => {
+            console.log("Произошла ошибка на сервере.");
+        })
 }
   
 function setCookie(name, value, days, path) {    
@@ -76,9 +76,9 @@ function createArticle(e) {
             } else{
                 setErrorNote("createArticleResponse", json.Message);
             }      
-        }).catch(error => {
-            setErrorNote("createArticleResponse", "Ошибка на сервере, попробуйте позже.");   
-        });   
+        }).catch(() => {
+                setErrorNote("createArticleResponse", "Ошибка на сервере, попробуйте позже.");
+            });   
       })
 }
 
@@ -110,9 +110,9 @@ fetch('account/changePassword', getPasOptions()).then(r => {
             clearChangePassForm();
         }
     })
-    }).catch(error => {
-            setErrorNote("ChangePassResponse","Ошибка на сервере, попробуйте позже.");   
-    });    
+    }).catch(() => {
+            setErrorNote("ChangePassResponse", "Ошибка на сервере, попробуйте позже.");
+        });    
 }
 
 function setPersonalInfo() {
@@ -133,7 +133,40 @@ function setMarks() {
     fetch('student/marks').then(r => {
         r.json().then( json =>{
             checkAuth(json);
-            var s = json.Body;
+
+            json.Body.sort(function(obj1, obj2) {
+                if (obj1.Semester < obj2.Semester) return -1;
+                if (obj1.Semester > obj2.Semester) return 1;
+                return 0;
+            })
+
+            var semesters = [...new Set(json.Body.map(function(item) {
+                return item.Semester;
+              }))];
+
+            var block = document.getElementById('learningAchievement');  
+
+            for (var i = 0; i < semesters.length; i++) {
+                var newTable = `
+                <p class="h4">`+(i+1)+` семестр </p>
+                <table class="table mt-4">
+                  <thead>
+                    <tr>
+                      <th>Предмет</th>
+                      <th>Оценка</th>
+                      <th>Тип сдачи</th>
+                      <th>Пересдача</th>
+                      <th>Семестр</th>          
+                    </tr>
+                  </thead>
+                  <tbody id="learningAchievementtable`+(i+1)+`"> 
+                  </tbody>
+                </table>`;
+                block.innerHTML += newTable;
+            }
+
+
+              console.log(semesters);
 
             const table = document.getElementById("progress");
             json.Body.forEach(item => {
@@ -178,7 +211,7 @@ function setMarks() {
                 newtr.appendChild(type);
                 newtr.appendChild(re);
                 newtr.appendChild(semester);
-                table.appendChild(newtr);
+                document.getElementById("learningAchievementtable"+item.Semester).appendChild(newtr);
             })
     })});
 }
@@ -187,7 +220,6 @@ function setPractices() {
     fetch('/student/practices').then(r => {
         r.json().then( json =>{
             checkAuth(json);
-            var a = json.Body;
 
             const allPractices = document.getElementById("div3");
             var count = 1;
@@ -280,7 +312,6 @@ function setArticles() {
     fetch('/student/articles').then(r => {
         r.json().then( json =>{
             checkAuth(json);
-            var a = json.Body;
 
             const confirmedTable = document.getElementById("confirmedArticleTable");
             const notConfirmedTable = document.getElementById("notConfirmedArticleTable");
@@ -334,7 +365,6 @@ function setCourse() {
     fetch('/student/courses').then(r => {
         r.json().then( json =>{
             checkAuth(json);
-            var a = json.Body;
 
             const setThemeCourseTable = document.getElementById("setThemeCourseTable");
             const courseTable = document.getElementById("courseTable");
@@ -470,7 +500,7 @@ function studentCourseConfirm(e, id) {
                 setErrorNote("verifCourseResponse", json.Message);
             }
         })
-        }).catch(error => {
-                setErrorNote("verifCourseResponse","Ошибка на сервере, попробуйте позже.");   
-        }); 
+        }).catch(() => {
+                setErrorNote("verifCourseResponse", "Ошибка на сервере, попробуйте позже.");
+            }); 
 }

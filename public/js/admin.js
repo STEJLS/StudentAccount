@@ -95,8 +95,6 @@ fetch('account/changePassword', getPasOptions()).then(r => {
 }
 
 //  Отправка файла 
-
-
 function getFileOption(e){
 const fileInput = e.target.querySelector('#file');
 const formData = new FormData();
@@ -137,10 +135,6 @@ fetch(url, getFileOption(e)).then( r => {
 }
 
 function getTempPasswords(e) {
-// e.preventDefault();
-// e.target.querySelector("#response").classList.remove("text-success");
-// e.target.querySelector("#response").classList.remove("text-danger");
-// e.target.querySelector('#spinner').classList.remove("d-none");
 
 fetch("admin/tempPasswords", {method: 'GET'})
     .then(r => {
@@ -150,50 +144,18 @@ fetch("admin/tempPasswords", {method: 'GET'})
             var a = document.createElement('a');
             a.href = url;
             a.download = "passwords.csv";
-            document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
+            document.body.appendChild(a);
             a.click();    
-            a.remove();  //afterwards we remove the element again     
-            // e.target.querySelector('#spinner').classList.add('d-none');     
+            a.remove();  
         })
     }
     ).catch(e => {
-    // e.target.querySelector("#response").innerHTML = "Ошибка на сервере, попробуйте позже."
-    // e.target.querySelector("#response").classList.add("text-danger");
-    // e.target.querySelector("#response").classList.remove("text-success"); 
-    // e.target.querySelector('#spinner').classList.add('d-none');
+
 }) 
 }
 
 
 // верификатор
-
-$(document).ready(function(){
-    // $("#addVerifResponse").addClass("d-none")
-    // console.log(JSON.parse(localStorage["user"]));
- 
-    // fetch('admin/faculties').then(r => {
-    //   r.json().then(json => {
-    //       checkAuth(json)
-  
-    //       if (!json.Сompleted){
-    //           setErrorNote("addVerifResponse", json.Message);
-    //           return;
-    //       }
-    //       const selectFuc = document.getElementById("faculties");
-    //       json.Body.forEach(item => {
-    //           var newOption = document.createElement('option');
-    //           newOption.innerHTML = item.Name;
-    //           newOption.value = item.ID;
-    //           selectFuc.appendChild(newOption);
-    //       })
-                  
-    //       updateDepartments(selectFuc.value);
-             
-    //   }).catch(error => {
-    //       setErrorNote("Ошибка на сервере, попробуйте позже.");   
-    // })  
-    // })  
-});
   
   function clearForm() {
       $("#login").val("");
