@@ -133,3 +133,68 @@ func CreateUserStudent(idField int, number string, team string, teamNumber int, 
 
 	return studentID, tempPassword
 }
+
+func getFacultyShortNames() map[string]bool {
+	rows, err := g.DB.Query("SELECT shortname FROM faculties")
+	if err != nil {
+		panic(fmt.Errorf("Ошибка. При получении коротких названий факультетов: %v", err.Error()))
+	}
+
+	defer rows.Close()
+
+	shortNames := make(map[string]bool)
+	var name string
+
+	for rows.Next() {
+		err := rows.Scan(&name)
+		if err != nil {
+			panic(fmt.Errorf("Ошибка. При получении коротких названий факультетов: %v", err.Error()))
+		}
+		shortNames[name] = true
+	}
+
+	return shortNames
+}
+
+func getDepartmentShortNames() map[string]bool {
+	rows, err := g.DB.Query("SELECT shortname FROM departments")
+	if err != nil {
+		panic(fmt.Errorf("Ошибка. При получении коротких названий кафедр: %v", err.Error()))
+	}
+
+	defer rows.Close()
+	shortNames := make(map[string]bool)
+	var name string
+
+	for rows.Next() {
+		err := rows.Scan(&name)
+		if err != nil {
+			panic(fmt.Errorf("Ошибка. При получении коротких названий кафедр: %v", err.Error()))
+		}
+		shortNames[name] = true
+	}
+
+	return shortNames
+}
+
+func getFieldsofstudyAliases() map[string]bool {
+	rows, err := g.DB.Query("SELECT alias FROM fieldsofstudy")
+	if err != nil {
+		panic(fmt.Errorf("Ошибка. При получении алиасов направлений подготовки: %v", err.Error()))
+	}
+
+	defer rows.Close()
+
+	shortNames := make(map[string]bool)
+	var name string
+
+	for rows.Next() {
+		err := rows.Scan(&name)
+		if err != nil {
+			panic(fmt.Errorf("Ошибка. При получении алиасов направлений подготовки: %v", err.Error()))
+		}
+		shortNames[name] = true
+	}
+
+	return shortNames
+}
