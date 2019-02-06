@@ -173,7 +173,7 @@ func GetRoots() *web.Router {
 		Error((*Context).panicHandler).
 		NotFound((*Context).notFound).
 		Middleware(web.LoggerMiddleware).
-		Middleware(web.StaticMiddleware(path.Join(rootPath, "public"), web.StaticOption{IndexFile: "index.html"}))
+		Middleware(web.StaticMiddleware(path.Join(rootPath, "public"), web.StaticOption{IndexFile: "index.html", Prefix : "/"}))
 
 	rootRouter.Subrouter(AuthContext{}, "/account").
 		Middleware((*AuthContext).getAndValidateAuthData).

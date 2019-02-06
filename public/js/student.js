@@ -156,7 +156,6 @@ function setMarks() {
                       <th>Оценка</th>
                       <th>Тип сдачи</th>
                       <th>Пересдача</th>
-                      <th>Семестр</th>          
                     </tr>
                   </thead>
                   <tbody id="learningAchievementtable`+(i+1)+`"> 
@@ -174,8 +173,7 @@ function setMarks() {
                 var subject = document.createElement('td');
                 var mark = document.createElement('td');
                 var type = document.createElement('td');
-                var re = document.createElement('td');
-                var semester = document.createElement('td');
+                var re = document.createElement('td');                
                 subject.innerHTML = item.Subject;
                 mark.innerHTML = item.Rating;
 
@@ -204,13 +202,11 @@ function setMarks() {
                     }
                 }
                 re.innerHTML = item.Repass? "Да" : "Нет";
-                semester.innerHTML = item.Semester;
 
                 newtr.appendChild(subject);
                 newtr.appendChild(mark);
                 newtr.appendChild(type);
                 newtr.appendChild(re);
-                newtr.appendChild(semester);
                 document.getElementById("learningAchievementtable"+item.Semester).appendChild(newtr);
             })
     })});
