@@ -124,6 +124,7 @@ function setPersonalInfo() {
             $("#faculty").text(s.FacultyName+"("+s.FacultyShortName+")");
             $("#department").text(s.DepartmentName+"("+s.DepartmentShortName+")");
             $("#fieldOfStudy").text(s.FieldName+"("+s.FieldCode+")");
+            $("#profile").text(s.FieldProfile);
             $("#group").text(s.Team+"-"+s.TeamNumber);
             $("#brand").text("КФ МГТУ"+" "+s.FullName);
     })});

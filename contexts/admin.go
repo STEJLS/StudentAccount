@@ -160,8 +160,8 @@ func addFieldsOfStudyFromCSV(c *UserContext, rw web.ResponseWriter, req *web.Req
 		panic(fmt.Errorf("Ошибка. При создании транзакции для создания напрвлений подготовки: %v", err.Error()))
 	}
 
-	stmt, err := transaction.Prepare(`INSERT INTO fieldsOfStudy(id_department, name, code, alias, level) VALUES( 
-		(SELECT id from departments where name = $1),$2,$3,$4,$5)`)
+	stmt, err := transaction.Prepare(`INSERT INTO fieldsOfStudy(id_department, name, code, profile, alias, level) VALUES( 
+		(SELECT id from departments where name = $1), $2, $3, $4, $5, $6)`)
 	if err != nil {
 		if err = transaction.Rollback(); err != nil {
 			panic(fmt.Errorf("Ошибка. При откате транзакции для добавлении направления подготовки: %v", err.Error()))
@@ -170,7 +170,7 @@ func addFieldsOfStudyFromCSV(c *UserContext, rw web.ResponseWriter, req *web.Req
 	}
 
 	for i, f := range fieldsOfStudy {
-		_, err = stmt.Exec(f.DepartmentName, f.Name, f.Code, f.Alias, f.Level)
+		_, err = stmt.Exec(f.DepartmentName, f.Name, f.Code, f.Profile, f.Alias, f.Level)
 		if err != nil {
 			if errt := transaction.Rollback(); errt != nil {
 				panic(fmt.Errorf("Ошибка. При откате транзакции для добавлении направления подготовки: %v", err.Error()))

@@ -24,6 +24,7 @@ type FieldOfStudyCSV struct {
 	DepartmentName string
 	Name           string
 	Code           string
+	Profile        string
 	Alias          string
 	Level          int
 }
@@ -99,17 +100,17 @@ func departmentFromCSVLine(columns []string) *DepartmentCSV {
 // departmentFromCSVLine - принимает на вход масcив строк, которые
 // представляют собой колонки и возвращает объект FieldsOfStudy
 func fieldOfStudyFromCSVLine(columns []string) *FieldOfStudyCSV {
-	if len(columns) != 5 {
+	if len(columns) != 6 {
 		return nil
 	}
-	level, err := strconv.Atoi(strings.TrimSpace(columns[4]))
+	level, err := strconv.Atoi(strings.TrimSpace(columns[5]))
 	if err != nil {
 		log.Printf("Ошибка. Припарсинге строки в цифру(level - %v ): %v", columns[4], err.Error())
 		return nil
 	}
 
 	return &FieldOfStudyCSV{strings.TrimSpace(columns[0]), strings.TrimSpace(columns[1]), strings.TrimSpace(columns[2]),
-		strings.TrimSpace(columns[3]), level}
+		strings.TrimSpace(columns[3]), strings.TrimSpace(columns[4]), level}
 }
 
 // StudentFromCSVLine - принимает на вход масcив строк, которые

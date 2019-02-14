@@ -21,10 +21,11 @@ CREATE TABLE fieldsOfStudy
     name varchar NOT NULL,
     alias varchar NOT NULL,
 	code varchar NOT NULL,
+	profile varchar NOT NULL,
     level smallint NOT NULL,
     FOREIGN KEY(id_department) REFERENCES departments(id) ON DELETE SET NULL
 );
-alter table fieldsofstudy add unique(id_department,code)
+alter table fieldsofstudy add unique(id_department,code,profile)
 
 level 
 0-бакалавр

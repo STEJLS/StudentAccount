@@ -63,7 +63,7 @@ func getStudentMarks(c *studentContext, rw web.ResponseWriter, req *web.Request)
 
 func getStudentInfo(c *studentContext, rw web.ResponseWriter, req *web.Request) {
 	row := g.DB.QueryRow(`SELECT s.number, u.fullname, s.team, s.teamnumber,
-	fi.name, fi.code, fi.level,
+	fi.name, fi.code, fi.profile, fi.level,
 							d.name, d.shortname, fa.name, fa.shortname 
 							FROM students s
 							JOIN users u ON u.id_student=s.id
@@ -79,6 +79,7 @@ func getStudentInfo(c *studentContext, rw web.ResponseWriter, req *web.Request) 
 		TeamNumber          int
 		FieldName           string
 		FieldCode           string
+		FieldProfile        string
 		level               int
 		DepartmentName      string
 		DepartmentShortName string
@@ -87,7 +88,7 @@ func getStudentInfo(c *studentContext, rw web.ResponseWriter, req *web.Request) 
 	}
 
 	err := row.Scan(&userInfo.Number, &userInfo.FullName, &userInfo.Team, &userInfo.TeamNumber, &userInfo.FieldName,
-		&userInfo.FieldCode, &userInfo.level, &userInfo.DepartmentName, &userInfo.DepartmentShortName, &userInfo.FacultyName,
+		&userInfo.FieldCode, &userInfo.FieldProfile, &userInfo.level, &userInfo.DepartmentName, &userInfo.DepartmentShortName, &userInfo.FacultyName,
 		&userInfo.FacultyShortName)
 	if err != nil {
 		panic(fmt.Errorf("Ошибка. При выборке информации о пользователе(login - %v ): %v", c.user.Login, err.Error()))
