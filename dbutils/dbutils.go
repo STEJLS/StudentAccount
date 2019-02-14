@@ -41,3 +41,11 @@ func CreateUserStudent(idField int, number string, team string, teamNumber int, 
 
 	return studentID, tempPassword
 }
+
+// ClearFOSandRPD - удаляет все документы типа ФОС(0) и РПД(1)
+func ClearFOSandRPD() {
+	_, err := g.DB.Exec("DELETE FROM documents WHERE type = 0 OR type = 1")
+	if err != nil {
+		panic(fmt.Errorf("Ошибка. При удалении всех ФОС и РПД: %v", err.Error()))
+	}
+}

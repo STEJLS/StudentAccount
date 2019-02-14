@@ -31,5 +31,8 @@ var PasswordValueName = "password"
 var NewPasswordValueName = "newPassword"
 
 var DataDirectoryName = path.Join(".", "data")
+var DocumentsDirectoryName = path.Join(DataDirectoryName, "documents")
+var FOSDirectoryName = path.Join(DocumentsDirectoryName, "ФОС")
+var RPDDirectoryName = path.Join(DocumentsDirectoryName, "РПД")
 var PasswordFileStorageName = path.Join(DataDirectoryName, "passwords.csv")
 var ArticlesDirectory = path.Join(DataDirectoryName, "articles")

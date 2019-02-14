@@ -44,22 +44,23 @@ func GetAllDepartmentsInMap() map[string]*t.Department {
 }
 
 // GetDepartmentShortNames - возвращает все короткие имена кафедр
-func GetDepartmentShortNames() map[string]bool {
-	rows, err := g.DB.Query("SELECT shortname FROM departments")
+func GetDepartmentShortNames() map[string]int {
+	rows, err := g.DB.Query("SELECT id, shortname FROM departments")
 	if err != nil {
 		panic(fmt.Errorf("Ошибка. При получении коротких названий кафедр: %v", err.Error()))
 	}
 
 	defer rows.Close()
-	shortNames := make(map[string]bool)
+	shortNames := make(map[string]int)
 	var name string
+	var id int
 
 	for rows.Next() {
-		err := rows.Scan(&name)
+		err := rows.Scan(&id, &name)
 		if err != nil {
 			panic(fmt.Errorf("Ошибка. При получении коротких названий кафедр: %v", err.Error()))
 		}
-		shortNames[name] = true
+		shortNames[name] = id
 	}
 
 	return shortNames

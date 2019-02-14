@@ -31,23 +31,24 @@ func GetAllFaculties() []*t.Faculty {
 }
 
 // GetFacultyShortNames - возвращает все короткие названия факультетов
-func GetFacultyShortNames() map[string]bool {
-	rows, err := g.DB.Query("SELECT shortname FROM faculties")
+func GetFacultyShortNames() map[string]int {
+	rows, err := g.DB.Query("SELECT id, shortname FROM faculties")
 	if err != nil {
 		panic(fmt.Errorf("Ошибка. При получении коротких названий факультетов: %v", err.Error()))
 	}
 
 	defer rows.Close()
 
-	shortNames := make(map[string]bool)
+	shortNames := make(map[string]int)
 	var name string
+	var id int
 
 	for rows.Next() {
-		err := rows.Scan(&name)
+		err := rows.Scan(&id, &name)
 		if err != nil {
 			panic(fmt.Errorf("Ошибка. При получении коротких названий факультетов: %v", err.Error()))
 		}
-		shortNames[name] = true
+		shortNames[name] = id
 	}
 
 	return shortNames

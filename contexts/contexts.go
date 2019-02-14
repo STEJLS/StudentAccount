@@ -196,7 +196,8 @@ func GetRoots() *web.Router {
 		Post("/сourseWorks", addCourseWorksFromCSV).
 		Get("/tempPasswords", getTempPasswords).
 		Get("/departments", (*UserContext).getDepartments).
-		Get("/faculties", (*UserContext).getFaculties)
+		Get("/faculties", (*UserContext).getFaculties).
+		Get("/ParseFOSandRPD", (*UserContext).addFOSandRPD)
 
 	verificatorRouter := rootRouter.Subrouter(VerifContext{}, "/verif")
 	verificatorRouter.Middleware((*VerifContext).userRequire).

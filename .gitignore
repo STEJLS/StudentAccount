@@ -3,3 +3,10 @@ data/*
 log.txt
 debug
 TODO
+build.exe
+main.exe
+.idea/StudentAccount.iml
+.idea/misc.xml
+.idea/modules.xml
+.idea/workspace.xml
+.idea/vcs.xml

@@ -75,7 +75,7 @@ func GenerateMD5hash(password string) string {
 	return fmt.Sprintf("%x", md5.Sum(temp))
 }
 
-// initgDB - инициализирует базу данных начальными значениями
+// InitDB - инициализирует базу данных начальными значениями
 func InitDB(config XMLconfig.Config) {
 	_, err := g.DB.Exec(`INSERT INTO users (login, password, role, isActivated) 
 					   VALUES ($1, $2, 0, true) ON CONFLICT (login) 
@@ -85,7 +85,7 @@ func InitDB(config XMLconfig.Config) {
 	}
 }
 
-// generateToken - генерирует уникальный токен для авторизации.
+// GenerateToken - генерирует уникальный токен для авторизации.
 func GenerateToken() string {
 	token, err := uuid.NewV4()
 
@@ -96,7 +96,7 @@ func GenerateToken() string {
 	return token.String()
 }
 
-// +generateTempPassword - создает временный пароль длиной 8
+// GenerateTempPassword - создает временный пароль длиной 8
 func GenerateTempPassword() string {
 	return GenerateToken()[0:8]
 }
@@ -148,10 +148,16 @@ func InitFiles() {
 	if _, err := os.Stat(g.ArticlesDirectory); os.IsNotExist(err) {
 		err = os.Mkdir(g.ArticlesDirectory, 0666)
 		if err != nil {
-			log.Fatalf("Ошибка. При создании папки для данных с именем - %v: %v", g.DataDirectoryName, err.Error())
+			log.Fatalf("Ошибка. При создании папки для статей с именем - %v: %v", g.DataDirectoryName, err.Error())
 		}
 	}
 
+	if _, err := os.Stat(g.DocumentsDirectoryName); os.IsNotExist(err) {
+		err = os.Mkdir(g.DocumentsDirectoryName, 0666)
+		if err != nil {
+			log.Fatalf("Ошибка. При создании папки для документов с именем - %v: %v", g.DataDirectoryName, err.Error())
+		}
+	}
 }
 
 func ValidateArticle(name string, journal string, biblioRecord string, articleType string) (*t.Article, string) {

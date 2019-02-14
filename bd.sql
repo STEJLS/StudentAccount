@@ -138,6 +138,23 @@ CREATE TABLE courseworks
 
 ALTER TABLE courseworks ADD UNIQUE(id_subject,semester)
 
+CREATE TABLE documents
+(
+    id SERIAL PRIMARY KEY,
+    id_faculty BIGINT NOT NULL,
+    id_department INTEGER NOT NULL,
+    id_field INTEGER NOT NULL,
+    type smallint NOT NULL,
+    name varchar NOT NULL,
+    path varchar NOT NULL,
+    FOREIGN KEY(id_faculty) REFERENCES faculties(id),
+    FOREIGN KEY(id_department) REFERENCES departments(id)
+    FOREIGN KEY(id_field) REFERENCES fieldsOfStudy(id)
+);
+-- type
+--  0 - фос
+--  1 - рпд
+                        
 
 -- команда создания скрипта БД
 -- pg_dump.exe --host=localhost --port=5432 --username=postgres --schema-only --file=D:\schChema.sql bmstu

@@ -44,23 +44,24 @@ func GetAllFieldsInMap() map[string]*t.FieldOfStudy {
 }
 
 // GetFieldsofstudyAliases - возвращает все алиасы (которкие названия) направлений подготовки
-func GetFieldsofstudyAliases() map[string]bool {
-	rows, err := g.DB.Query("SELECT alias FROM fieldsofstudy")
+func GetFieldsofstudyAliases() map[string]int {
+	rows, err := g.DB.Query("SELECT id, alias FROM fieldsofstudy")
 	if err != nil {
 		panic(fmt.Errorf("Ошибка. При получении алиасов направлений подготовки: %v", err.Error()))
 	}
 
 	defer rows.Close()
 
-	shortNames := make(map[string]bool)
+	shortNames := make(map[string]int)
 	var name string
+	var id int
 
 	for rows.Next() {
-		err := rows.Scan(&name)
+		err := rows.Scan(&id, &name)
 		if err != nil {
 			panic(fmt.Errorf("Ошибка. При получении алиасов направлений подготовки: %v", err.Error()))
 		}
-		shortNames[name] = true
+		shortNames[name] = id
 	}
 
 	return shortNames

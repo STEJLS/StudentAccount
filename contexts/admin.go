@@ -7,6 +7,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/STEJLS/StudentAccount/FOSandRPDparser"
 	"github.com/STEJLS/StudentAccount/csv"
 	dbu "github.com/STEJLS/StudentAccount/dbutils"
 	g "github.com/STEJLS/StudentAccount/globals"
@@ -484,4 +485,16 @@ func createVerif(c *UserContext, rw web.ResponseWriter, req *web.Request) {
 	c.response.Сompleted = true
 	c.response.Message = "Верификатор успешно создан"
 	c.response.Body = verif
+}
+
+func (c *UserContext) addFOSandRPD(rw web.ResponseWriter, req *web.Request) {
+	dbu.ClearFOSandRPD()
+
+	if !FOSandRPDparser.NewParser().Parse() {
+		c.response.Message = fmt.Sprintf("Стартовые папки для документов не найдены(%v и %v)", g.FOSDirectoryName, g.RPDDirectoryName)
+		return
+	}
+
+	c.response.Сompleted = true
+	c.response.Message = "Документы успешно добавлены"
 }
