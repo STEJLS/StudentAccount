@@ -323,7 +323,48 @@ func (c *studentContext) getCourses(rw web.ResponseWriter, req *web.Request) {
 }
 
 func (c *studentContext) getFOSandRPDList(rw web.ResponseWriter, req *web.Request) {
-	//stub
+	rows, err := g.DB.Query(`SELECT name, id FROM documents 
+				WHERE id_faculty = $1 and id_department = $2 and
+				type in(0,1) and 
+				id_field = (SELECT id_field FROM students where id = $3)				
+				ORDER BY name, type `, *c.user.IDFaculty, *c.user.IDDepartment, *c.user.IDStudent)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			c.response.Сompleted = true
+			c.response.Message = "Для вашего направления подготовки еще нет документов"
+			return
+		}
+		panic(fmt.Errorf("Ошибка. При выборке списка ФОС и РПД документов: %v", err.Error()))
+	}
+
+	result := make([]*struct {
+		Name  string
+		FosID int
+		RpdID int
+	}, 0)
+
+	for rows.Next() {
+		docInfo := new(struct {
+			Name  string
+			FosID int
+			RpdID int
+		})
+
+		err = rows.Scan(&docInfo.Name, &docInfo.FosID)
+		if err != nil {
+			panic(fmt.Errorf("Ошибка. При выборке ФОС или РПД произошла ошибка: %v", err.Error()))
+		}
+		rows.Next()
+		err = rows.Scan(&docInfo.Name, &docInfo.RpdID)
+		if err != nil {
+			panic(fmt.Errorf("Ошибка. При выборке ФОС или РПД произошла ошибка: %v", err.Error()))
+		}
+		result = append(result, docInfo)
+	}
+
+	c.response.Body = result
+	c.response.Сompleted = true
 }
 
 func (c *studentContext) getDocument(rw web.ResponseWriter, req *web.Request) {
