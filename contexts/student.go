@@ -321,3 +321,36 @@ func (c *studentContext) getCourses(rw web.ResponseWriter, req *web.Request) {
 	c.response.Body = coursesInfo
 	c.response.Сompleted = true
 }
+
+func (c *studentContext) getFOSandRPDList(rw web.ResponseWriter, req *web.Request) {
+	//stub
+}
+
+func (c *studentContext) getDocument(rw web.ResponseWriter, req *web.Request) {
+	id, err := strconv.Atoi(req.PathParams["document_id"])
+	if err != nil {
+		c.response.Message = "Укажите верный id документа"
+		return
+	}
+
+	var path string
+	err = g.DB.QueryRow(`SELECT path FROM documents WHERE id = $1`, id).Scan(&path)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			c.response.Message = "С указанным id файла не существует"
+			return
+		}
+		panic(fmt.Errorf("Ошибка. При выборке пути документа с id = %v: %v", id, err.Error()))
+	}
+
+	data, err := ioutil.ReadFile(path)
+	if err != nil {
+		panic(fmt.Errorf("Ошибка. При чтении статьи: %v", err.Error()))
+	}
+
+	rw.Header().Add("Content-Disposition", fmt.Sprintf("attachment; filename=\""+"%s"+"\"", filepath.Base(path)))
+	rw.Header().Add("Content-type", "application/pdf")
+	rw.Header().Add("Content-Length", fmt.Sprintf("%v", len(data)))
+
+	rw.Write(data)
+}
