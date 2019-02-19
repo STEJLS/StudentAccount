@@ -6,6 +6,7 @@ function disp(divname){
     $("#div5").addClass("d-none");
     $("#div6").addClass("d-none");
     $("#div7").addClass("d-none");
+    $("#div8").addClass("d-none");
     $("#chPas").addClass("d-none");
     $("#"+divname).removeClass("d-none");
 }
@@ -251,3 +252,32 @@ fetch("admin/tempPasswords", {method: 'GET'})
           setErrorNote("Ошибка на сервере, попробуйте позже.");   
     });  
   }
+
+
+  function FOSandRPDHandler(e, url) {
+    e.preventDefault();
+    e.target.querySelector("#response").classList.remove("text-success");
+    e.target.querySelector("#response").classList.remove("text-danger");
+    e.target.querySelector('#spinner').classList.remove("d-none");
+    
+    fetch(url).then( r => {
+        r.json().then( json => {
+        checkAuth(json);
+            e.target.querySelector("#response").innerHTML = json.Message;
+            e.target.querySelector("#response").classList.remove("d-none");
+        if (json.Сompleted){
+            e.target.querySelector("#response").classList.add("text-success");
+            e.target.querySelector("#response").classList.remove("text-danger");
+        } else{
+            e.target.querySelector("#response").classList.add("text-danger");
+            e.target.querySelector("#response").classList.remove("text-success");
+        }
+        e.target.querySelector('#spinner').classList.add('d-none');
+        })
+    }).catch(e => {
+        e.target.querySelector("#response").innerHTML = "Ошибка на сервере, попробуйте позже."
+        e.target.querySelector("#response").classList.add("text-danger");
+        e.target.querySelector("#response").classList.remove("text-success"); 
+        e.target.querySelector('#spinner').classList.add('d-none');
+    }) 
+    }

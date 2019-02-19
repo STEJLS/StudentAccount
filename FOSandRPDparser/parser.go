@@ -1,6 +1,7 @@
 package FOSandRPDparser
 
 import (
+	"database/sql"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -26,6 +27,7 @@ type parser struct {
 	currentDepartmentID   int
 	currentFieldID        int
 	action                addDocToDBFunc
+	stmt                  *sql.Stmt
 }
 
 func NewParser() *parser {
@@ -40,10 +42,45 @@ func NewParser() *parser {
 // определенных в глобальных переменных FOSDirectoryName и RPDDirectoryName.
 // В случае успеха возвращает true, иначе false.
 func (p *parser) Parse() bool {
+
+	transaction, err := g.DB.Begin()
+	if err != nil {
+		panic(fmt.Errorf("Ошибка. При создании транзакции для парсинга ФОС и РПД: %v", err.Error()))
+	}
+
+	stmt, err := transaction.Prepare(`INSERT INTO documents (id_faculty, id_department, id_field, type, name, path)
+	VALUES ($1, $2, $3, $4, $5, $6)`)
+	if err != nil {
+		if err = transaction.Rollback(); err != nil {
+			panic(fmt.Errorf("Ошибка. При откате транзакции для парсинга ФОС и РПД: %v", err.Error()))
+		}
+		panic(fmt.Errorf("Ошибка. При создании подготовленного выражения для парсинга ФОС и РПД: %v", err.Error()))
+	}
+
+	p.stmt = stmt
+
+	defer func() {
+		if r := recover(); r != nil {
+			transaction.Rollback()
+			panic(r)
+		}
+	}()
+
 	p.action = p.addFOS
 	isParsedFOS := p.parse(g.FOSDirectoryName)
 	p.action = p.addRPD
 	isParsedRPD := p.parse(g.RPDDirectoryName)
+
+	if err = stmt.Close(); err != nil {
+		if err = transaction.Rollback(); err != nil {
+			panic(fmt.Errorf("Ошибка. При откате транзакции для парсинга ФОС и РПД: %v", err.Error()))
+		}
+		log.Printf("Ошибка. При закрытии подготовленного выражения для парсинга ФОС и РПД: %v", err.Error())
+	}
+
+	if err = transaction.Commit(); err != nil {
+		panic(fmt.Errorf("Ошибка. При подтверждении транзакции для парсинга ФОС и РПД: %v", err.Error()))
+	}
 
 	if !isParsedFOS && !isParsedRPD {
 		return false
@@ -159,12 +196,7 @@ func (p *parser) processField(parentDir string, fieldsDirNames []string) {
 }
 
 func (p *parser) addFOS(parentDir string, fileName string) {
-	_, err := g.DB.Query(`INSERT INTO documents (id_faculty, id_department, id_field, type, name, path)
-				VALUES ($1, $2, $3, $4, $5, $6)`,
-		p.currentFacultyID,
-		p.currentDepartmentID,
-		p.currentFieldID,
-		0,
+	_, err := p.stmt.Exec(p.currentFacultyID, p.currentDepartmentID, p.currentFieldID, 0,
 		strings.TrimRight(fileName, filepath.Ext(fileName)),
 		path.Join(parentDir, fileName))
 
@@ -174,13 +206,8 @@ func (p *parser) addFOS(parentDir string, fileName string) {
 }
 
 func (p *parser) addRPD(parentDir string, fileName string) {
-	_, err := g.DB.Query(`INSERT INTO documents (id_faculty, id_department, id_field, type, name, path)
-				VALUES ($1, $2, $3, $4, $5, $6)`,
-		p.currentFacultyID,
-		p.currentDepartmentID,
-		p.currentFieldID,
-		1,
-		strings.TrimRight(fileName, filepath.Ext(fileName)),
+	_, err := p.stmt.Exec(p.currentFacultyID, p.currentDepartmentID,
+		p.currentFieldID, 1, strings.TrimRight(fileName, filepath.Ext(fileName)),
 		path.Join(parentDir, fileName))
 
 	if err != nil {

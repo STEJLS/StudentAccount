@@ -323,11 +323,13 @@ func (c *studentContext) getCourses(rw web.ResponseWriter, req *web.Request) {
 }
 
 func (c *studentContext) getFOSandRPDList(rw web.ResponseWriter, req *web.Request) {
-	rows, err := g.DB.Query(`SELECT name, id FROM documents 
-				WHERE id_faculty = $1 and id_department = $2 and
-				type in(0,1) and 
-				id_field = (SELECT id_field FROM students where id = $3)				
-				ORDER BY name, type `, *c.user.IDFaculty, *c.user.IDDepartment, *c.user.IDStudent)
+	rows, err := g.DB.Query(`SELECT t1.name, t1.id, t2.id  from (SELECT name, id  from documents where     id_faculty = $1 and
+		id_department = $2 and
+		id_field  = (SELECT id_field FROM students where id = $3) and type = 0) as t1
+	join (SELECT name, id  from documents where     id_faculty = $4 and
+		id_department = $5 and
+		id_field  = (SELECT id_field FROM students where id = $6) and type = 1) as t2 on t2.name = t1.name`,
+		c.user.IDFaculty, c.user.IDDepartment, c.user.IDStudent, c.user.IDFaculty, c.user.IDDepartment, c.user.IDStudent)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -351,16 +353,16 @@ func (c *studentContext) getFOSandRPDList(rw web.ResponseWriter, req *web.Reques
 			RpdID int
 		})
 
-		err = rows.Scan(&docInfo.Name, &docInfo.FosID)
+		err = rows.Scan(&docInfo.Name, &docInfo.FosID, &docInfo.RpdID)
 		if err != nil {
 			panic(fmt.Errorf("Ошибка. При выборке ФОС или РПД произошла ошибка: %v", err.Error()))
 		}
-		rows.Next()
-		err = rows.Scan(&docInfo.Name, &docInfo.RpdID)
-		if err != nil {
-			panic(fmt.Errorf("Ошибка. При выборке ФОС или РПД произошла ошибка: %v", err.Error()))
-		}
+
 		result = append(result, docInfo)
+	}
+
+	if len(result) == 0 {
+		c.response.Message = "Для вашего направления подготовки еще нет документов"
 	}
 
 	c.response.Body = result

@@ -86,6 +86,12 @@
                     Добавление курсовых работ
                   </a>
               </li>
+              <li class="nav-item" onclick="disp('div8')">
+                  <a class="nav-link" href="#">
+                    <span data-feather="file"></span>
+                    Добавление ФОС и РПД
+                  </a>
+              </li>
             </ul>          
           </div>
         </nav>
@@ -341,6 +347,25 @@
               </div>
           </div>
 
+          <div class="d-none"id="div8">
+            <div class="container" style="font-size: 18px;"> 
+                <h1 class="h5 mb-3 font-weight-normal">Добавление ФОС и РПД</h1>
+                Формат директорий:<br>
+                Документы - ФОС - Факультет - Кафедра - Группа<br>
+                Документы - РПД - Факультет - Кафедра - Группа<br>
+                Для названий факультетов, кафедр и групп используются сокращенные названия.<br>
+                Например: РПД\ИУ-КФ\ИУ3-КФ\ГрУсл12<br>
+                <form onsubmit="FOSandRPDHandler(event,'admin/parseFOSandRPD');" >
+                    <div class="form-group">
+                        <div class="d-none" id="response"></div>
+                    </div>
+                    <button class="btn btn-lg btn-primary btn-block mt-3 col-6"  type="submit">
+                        Добавить
+                        <i class="fa fa-spinner fa-spin d-none" style="font-size:24px" id="spinner"></i>
+                    </button>  
+                </form>
+            </div>
+        </div>
 
           <div class="d-none" id="chPas">
               <div class="container" style="font-size: 18px;">

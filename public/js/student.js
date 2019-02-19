@@ -501,3 +501,76 @@ function studentCourseConfirm(e, id) {
                 setErrorNote("verifCourseResponse", "Ошибка на сервере, попробуйте позже.");
             }); 
 }
+
+function setProgramsOfDisciplines() {
+    fetch('student/FOSandRPDList').then(r => {
+        r.json().then( json =>{
+            checkAuth(json);
+            console.log(json.Body);
+            
+            var container = document.getElementById("programsOfDiscipline");
+            if (json.Body.length == 0){
+                console.log("json.Body.length");
+                var p = document.createElement('p');
+                p.innerHTML = json.Message;
+                container.appendChild(p);
+                return;
+            }
+
+            var table = document.createElement('table')
+            table.setAttribute("class", "table")
+            var thread = document.createElement('thead')
+            var tr = document.createElement('tr')
+            var th1 = document.createElement('th')
+            var th2 = document.createElement('th')
+            var th3 = document.createElement('th')
+            var th4 = document.createElement('th')
+            th1.innerHTML = "#";
+            th1.setAttribute("scope", "col")
+            tr.appendChild(th1);
+            th2.innerHTML = "Предмет";
+            th2.setAttribute("scope", "col")
+            tr.appendChild(th2);
+            th3.innerHTML = "ФОС";
+            th3.setAttribute("scope", "col")
+            tr.appendChild(th3)
+            th4.innerHTML = "РПД";
+            th4.setAttribute("scope", "col")
+            tr.appendChild(th4);
+            thread.appendChild(tr);
+            table.appendChild(thread);            
+
+            var tbody = document.createElement('tbody')
+            var count = 1;
+            json.Body.forEach(item => {
+                var newtr = document.createElement('tr');
+                var newth = document.createElement('th');
+                newth.setAttribute("scope", "row");
+                newth.innerHTML = count++;
+                var name = document.createElement('td');
+                var fos = document.createElement('td');
+                var rpd = document.createElement('td');
+                var fosa = document.createElement('a');
+                var rpda = document.createElement('a');
+                name.innerHTML = item.Name;
+                
+                fosa.innerHTML = "Скачать";
+                rpda.innerHTML = "Скачать";
+                
+                fosa.setAttribute("href", "./student/document/"+item.FosID);
+                rpda.setAttribute("href", "./student/document/"+item.RpdID);
+                fos.appendChild(fosa)
+                rpd.appendChild(rpda)
+
+                newtr.appendChild(newth)
+                newtr.appendChild(name)
+                newtr.appendChild(fos)
+                newtr.appendChild(rpd)   
+                
+                tbody.appendChild(newtr);
+                
+            })
+            table.appendChild(tbody)
+            container.appendChild(table)
+    })});
+}

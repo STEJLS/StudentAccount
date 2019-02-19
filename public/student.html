@@ -87,6 +87,12 @@
                     Добавление статьи
                   </a>
               </li>
+              <li class="nav-item" onclick="disp('div7')">
+                  <a class="nav-link" href="#">
+                    <span data-feather="inbox"></span>
+                    Программы дисциплин
+                  </a>
+              </li>
             </ul>          
           </div>
         </nav>
@@ -215,6 +221,13 @@
               </div>
             </form>
             </div>
+            </div>
+
+            <div class="d-none"id="div7" style="font-size: 18px;">
+              <div class="container col-12" id="programsOfDiscipline">
+                <h1 class="h3 mb-4 font-weight-normal">Программы дисциплин</h1>
+              </div>
+
           </div>
 
           <div class="d-none" id="chPas">
@@ -368,6 +381,7 @@
       setPractices();
       setArticles();
       setCourse();
+      setProgramsOfDisciplines();
       $('#article-modal').on('show.bs.modal',setHandlerForModalArticle);
       $('#verif-course-modal').on('show.bs.modal',setHandlerForModalVerifCourse);
       //  Icons
