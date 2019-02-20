@@ -73,6 +73,8 @@ function createArticle(e) {
             if (json.Сompleted){
                 setSuccessNote("createArticleResponse", json.Message);
                 e.target.reset();
+                setArticles();
+                console.log("fdf");
             } else{
                 setErrorNote("createArticleResponse", json.Message);
             }      
@@ -80,6 +82,7 @@ function createArticle(e) {
                 setErrorNote("createArticleResponse", "Ошибка на сервере, попробуйте позже.");
             });   
       })
+      
 }
 
 function getPasOptions() {
@@ -166,8 +169,7 @@ function setMarks() {
             }
 
 
-              console.log(semesters);
-
+            
             const table = document.getElementById("progress");
             json.Body.forEach(item => {
                 var newtr = document.createElement('tr');
@@ -506,7 +508,6 @@ function setProgramsOfDisciplines() {
     fetch('student/FOSandRPDList').then(r => {
         r.json().then( json =>{
             checkAuth(json);
-            console.log(json.Body);
             
             var container = document.getElementById("programsOfDiscipline");
             if (json.Body.length == 0){
