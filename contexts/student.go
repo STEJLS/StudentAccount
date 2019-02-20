@@ -104,40 +104,47 @@ func addArticle(c *studentContext, rw web.ResponseWriter, req *web.Request) {
 	biblioRecord := req.FormValue("biblioRecord")
 	articleType := req.FormValue("type")
 
-	file, header, err := req.FormFile("article")
-	if err != nil {
-		c.response.Message = "Файл не получен"
-		return
-	}
-
-	if filepath.Ext(header.Filename) != ".pdf" {
-		c.response.Message = "Файл должен иметь формат pdf"
-		return
-	}
-
 	article, errStr := u.ValidateArticle(name, journal, biblioRecord, articleType)
 	if article == nil {
 		c.response.Message = errStr
 		return
 	}
 
-	fileName := u.GenerateToken()
-
-	data, err := ioutil.ReadAll(file)
+	file, header, err := req.FormFile("article")
+	isRecieved := true
+	realName := ""
 	if err != nil {
-		c.response.Message = "Файл не получен"
-		return
+		isRecieved = false
 	}
 
-	err = ioutil.WriteFile(path.Join(g.ArticlesDirectory, fileName), data, 0666)
-	if err != nil {
-		panic(fmt.Errorf("Ошибка. При записи статьи на диск: %v", err.Error()))
+	fileName := ""
+	if isRecieved {
+		realName = header.Filename
+		if filepath.Ext(header.Filename) != ".pdf" {
+			c.response.Message = "Файл должен иметь формат pdf"
+			return
+		}
+
+		data, err := ioutil.ReadAll(file)
+		if err != nil {
+			c.response.Message = "Файл не получен"
+			return
+		}
+
+		fileName = u.GenerateToken()
+
+		err = ioutil.WriteFile(path.Join(g.ArticlesDirectory, fileName), data, 0666)
+		if err != nil {
+			panic(fmt.Errorf("Ошибка. При записи статьи на диск: %v", err.Error()))
+		}
 	}
 
 	_, err = g.DB.Exec(`INSERT INTO articles(name, journal, biblioRecord, type, fileName, realFileName,id_student) 
-			 VALUES($1, $2, $3, $4, $5, $6, $7)`, article.Name, article.Journal, article.BiblioRecord, article.ArticleType, fileName, header.Filename, c.user.IDStudent)
+			 VALUES($1, $2, $3, $4, $5, $6, $7)`, article.Name, article.Journal, article.BiblioRecord, article.ArticleType, fileName, realName, c.user.IDStudent)
 	if err != nil {
-		os.Remove(path.Join(g.ArticlesDirectory, fileName))
+		if isRecieved {
+			os.Remove(path.Join(g.ArticlesDirectory, fileName))
+		}
 
 		if pe, ok := err.(*pq.Error); ok { // Нарушение уникальности
 			if pe.Code == "23505" {
@@ -232,7 +239,7 @@ func (c *studentContext) getPractices(rw web.ResponseWriter, req *web.Request) {
 }
 
 func (c *studentContext) getArticles(rw web.ResponseWriter, req *web.Request) {
-	rows, err := g.DB.Query(`SELECT id, name, journal, bibliorecord, type, confirmed 
+	rows, err := g.DB.Query(`SELECT id, name, journal, bibliorecord, type, filename, confirmed 
 							 FROM articles
 							 WHERE id_student = $1`, c.user.IDStudent)
 	if err != nil {
@@ -246,6 +253,7 @@ func (c *studentContext) getArticles(rw web.ResponseWriter, req *web.Request) {
 		Journal      string
 		BiblioRecord string
 		ArticlType   string
+		FileName     string
 		Confirmed    bool
 	}, 0)
 
@@ -256,11 +264,12 @@ func (c *studentContext) getArticles(rw web.ResponseWriter, req *web.Request) {
 			Journal      string
 			BiblioRecord string
 			ArticlType   string
+			FileName     string
 			Confirmed    bool
 		})
 
 		err = rows.Scan(&articleInfo.ID, &articleInfo.Name, &articleInfo.Journal, &articleInfo.BiblioRecord,
-			&articleInfo.ArticlType, &articleInfo.Confirmed)
+			&articleInfo.ArticlType, &articleInfo.FileName, &articleInfo.Confirmed)
 		if err != nil {
 			panic(fmt.Errorf("Ошибка. При выборке статей: %v", err.Error()))
 		}

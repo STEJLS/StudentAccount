@@ -44,6 +44,12 @@ func (c *Context) getArticle(rw web.ResponseWriter, req *web.Request) {
 		panic(fmt.Errorf("Ошибка. Во время выборки статьи: %v", err.Error()))
 	}
 
+	if localFileName == "" || realFileName == "" { //У данной статьи нет файла
+		rw.WriteHeader(http.StatusBadRequest)
+		c.response.Message = "К данной статье не прикреплен файл"
+		return
+	}
+
 	data, err := ioutil.ReadFile(path.Join(g.ArticlesDirectory, localFileName))
 	if err != nil {
 		panic(fmt.Errorf("Ошибка. При чтении статьи: %v", err.Error()))

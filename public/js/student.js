@@ -74,7 +74,6 @@ function createArticle(e) {
                 setSuccessNote("createArticleResponse", json.Message);
                 e.target.reset();
                 setArticles();
-                console.log("fdf");
             } else{
                 setErrorNote("createArticleResponse", json.Message);
             }      
@@ -169,7 +168,7 @@ function setMarks() {
             }
 
 
-            
+
             const table = document.getElementById("progress");
             json.Body.forEach(item => {
                 var newtr = document.createElement('tr');
@@ -338,6 +337,7 @@ function setArticles() {
                 newa.setAttribute("data-journal", item.Journal);
                 newa.setAttribute("data-ref", item.BiblioRecord);
                 newa.setAttribute("data-type", item.ArticlType);
+                newa.setAttribute("data-fileName", item.FileName);
                 newa.setAttribute("data-id", item.ID);
                 newtd.appendChild(newa);
                 newtr.appendChild(newth);
@@ -428,13 +428,13 @@ function setCourse() {
 }
 
 function setHandlerForModalArticle(event) {
-    console.log("fd");
     var button = $(event.relatedTarget) // Кнопка, что спровоцировало модальное окно  
     var name = button.data('name') 
     var journal = button.data('journal') 
     var ref = button.data('ref') 
     var type = button.data('type') 
     var id = button.data('id') 
+    var fileName = button.data('filename') 
 
     var modal = $(this)
     modal.find('#article-name').val(name)
@@ -442,6 +442,10 @@ function setHandlerForModalArticle(event) {
     modal.find('#article-ref').val(ref)
     modal.find('#article-type').val(type)
     modal.find('#article-download').attr("href", "student/article/"+id)
+
+    if (fileName == ""){
+        document.getElementById("article-download").style.visibility = "hidden";
+    }
 }
 
 function setHandlerForModalVerifCourse(event) {
@@ -460,7 +464,6 @@ function setHandlerForModalVerifCourse(event) {
 
     modal.find('#verif-course-theme').val(theme);
     if(theme != ""){
-        console.log("dsd");
         document.getElementById("submitCourseBTN").classList.add('d-none');
         document.getElementById("verif-course-ModalLabel").innerHTML = "Курсовая работа";
         modal.find('#verif-course-theme').attr("readonly","readonly");
@@ -511,7 +514,6 @@ function setProgramsOfDisciplines() {
             
             var container = document.getElementById("programsOfDiscipline");
             if (json.Body.length == 0){
-                console.log("json.Body.length");
                 var p = document.createElement('p');
                 p.innerHTML = json.Message;
                 container.appendChild(p);
