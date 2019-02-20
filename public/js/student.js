@@ -428,6 +428,7 @@ function setCourse() {
 }
 
 function setHandlerForModalArticle(event) {
+    document.getElementById("article-download").style.visibility = "visible";
     var button = $(event.relatedTarget) // Кнопка, что спровоцировало модальное окно  
     var name = button.data('name') 
     var journal = button.data('journal') 
