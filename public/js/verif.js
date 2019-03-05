@@ -119,6 +119,7 @@ function setArticlesToVerif() {
                 newa.setAttribute("data-journal", item.Journal);
                 newa.setAttribute("data-ref", item.BiblioRecord);
                 newa.setAttribute("data-type", item.ArticlType);
+                newa.setAttribute("data-fileName", item.FileName);
                 newa.setAttribute("data-id", item.ID);
                 newtd.appendChild(newa);
                 newtr.appendChild(newth);
@@ -271,6 +272,7 @@ function setHandlerForModalVerifArticle(event) {
     var ref = button.data('ref') 
     var type = button.data('type') 
     var id = button.data('id') 
+    var fileName = button.data('filename')
 
     var modal = $(this)
     modal.find('#verifArticleResponse').addClass("d-none")
@@ -283,6 +285,10 @@ function setHandlerForModalVerifArticle(event) {
     modal.find('#verif-article-download').attr("href", "verif/article/"+id)
     modal.find('#verif-article-cancel-btn').attr("onclick", "verifArticleCancel("+id+")")
     modal.find('#verif-article-confirm-form').attr("onsubmit", "verifArticleConfirm(event,"+id+")")
+
+    if (fileName == ""){
+        document.getElementById("verif-article-download").style.visibility = "hidden";
+    }    
 }
 
 function getCancelArticleOptions(id) {

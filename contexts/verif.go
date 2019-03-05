@@ -173,7 +173,7 @@ func (c *VerifContext) confirmArticle(rw web.ResponseWriter, req *web.Request) {
 
 func (c *VerifContext) articlesForVerif(rw web.ResponseWriter, req *web.Request) {
 	rows, err := g.DB.Query(`SELECT a.id, u.fullname, (s.team||'-'|| s.teamnumber) as team, 
-									a.name, a.journal, a.bibliorecord, a.type FROM articles as a
+									a.name, a.journal, a.bibliorecord, a.type, a.filename FROM articles as a
 							JOIN students s ON s.id = a.id_student
 							JOIN users u ON u.id_student = s.id
 							WHERE confirmed = false 
@@ -194,6 +194,7 @@ func (c *VerifContext) articlesForVerif(rw web.ResponseWriter, req *web.Request)
 		Journal      string
 		BiblioRecord string
 		ArticlType   string
+		FileName     string
 	}, 0)
 
 	for rows.Next() {
@@ -205,10 +206,11 @@ func (c *VerifContext) articlesForVerif(rw web.ResponseWriter, req *web.Request)
 			Journal      string
 			BiblioRecord string
 			ArticlType   string
+			FileName     string
 		})
 
 		err = rows.Scan(&articleInfo.ID, &articleInfo.FIO, &articleInfo.Team, &articleInfo.Name,
-			&articleInfo.Journal, &articleInfo.BiblioRecord, &articleInfo.ArticlType)
+			&articleInfo.Journal, &articleInfo.BiblioRecord, &articleInfo.ArticlType, &articleInfo.FileName)
 		if err != nil {
 			panic(fmt.Errorf("Ошибка. При выборке статей: %v", err.Error()))
 		}
