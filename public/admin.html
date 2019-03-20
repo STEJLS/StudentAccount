@@ -404,7 +404,7 @@
       r.json().then(json => {
           checkAuth(json)
   
-          if (!json.Сompleted){
+          if (!json.Completed){
               setErrorNote("addVerifResponse", json.Message);
               return;
           }

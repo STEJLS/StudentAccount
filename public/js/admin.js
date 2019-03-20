@@ -83,7 +83,7 @@ function changePassword(e) {
 fetch('account/changePassword', getPasOptions()).then(r => {
     r.json().then( json =>{
     checkAuth(json);
-    if (json.Сompleted){
+    if (json.Completed){
         setSuccessNote("ChangePassResponse", json.Message);
     } else{
         setErrorNote("ChangePassResponse", json.Message);
@@ -118,7 +118,7 @@ fetch(url, getFileOption(e)).then( r => {
     checkAuth(json);
         e.target.querySelector("#response").innerHTML = json.Message;
         e.target.querySelector("#response").classList.remove("d-none");
-    if (json.Сompleted){
+    if (json.Completed){
         e.target.querySelector("#response").classList.add("text-success");
         e.target.querySelector("#response").classList.remove("text-danger");
     } else{
@@ -197,7 +197,7 @@ fetch("admin/tempPasswords", {method: 'GET'})
     fetch("admin/verif", getOptions()).then(r => r.json().then( json =>{
       checkAuth(json)
   
-      if (!json.Сompleted){
+      if (!json.Completed){
           setErrorNote("addVerifResponse", json.Message);
       }else{
           setSuccessNote("addVerifResponse", json.Message);
@@ -225,7 +225,7 @@ fetch("admin/tempPasswords", {method: 'GET'})
       fetch('admin/departments').then(r => {
         r.json().then(json => {
           checkAuth(json)
-            if (!json.Сompleted){
+            if (!json.Completed){
               setErrorNote("addVerifResponse", json.Message);
               return;
             }
@@ -265,7 +265,7 @@ fetch("admin/tempPasswords", {method: 'GET'})
         checkAuth(json);
             e.target.querySelector("#response").innerHTML = json.Message;
             e.target.querySelector("#response").classList.remove("d-none");
-        if (json.Сompleted){
+        if (json.Completed){
             e.target.querySelector("#response").classList.add("text-success");
             e.target.querySelector("#response").classList.remove("text-danger");
         } else{

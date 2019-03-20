@@ -73,7 +73,7 @@ func addFacultiesFromCSV(c *UserContext, rw web.ResponseWriter, req *web.Request
 		panic(fmt.Errorf("Ошибка. При подтверждении транзакции для добавления новых факультетов: %v", err.Error()))
 	}
 
-	c.response.Сompleted = true
+	c.response.Completed = true
 	c.response.Message = "Факультеты успешно добавлены"
 }
 func addDepartmentsFromCSV(c *UserContext, rw web.ResponseWriter, req *web.Request) {
@@ -135,7 +135,7 @@ func addDepartmentsFromCSV(c *UserContext, rw web.ResponseWriter, req *web.Reque
 		panic(fmt.Errorf("Ошибка. При подтверждении транзакции для добавления новых кафедр: %v", err.Error()))
 	}
 
-	c.response.Сompleted = true
+	c.response.Completed = true
 	c.response.Message = "Кафедры успешно добавлены"
 }
 
@@ -201,7 +201,7 @@ func addFieldsOfStudyFromCSV(c *UserContext, rw web.ResponseWriter, req *web.Req
 		panic(fmt.Errorf("Ошибка. При подтверждении транзакции для создания напрвлений подготовки: %v", err.Error()))
 	}
 
-	c.response.Сompleted = true
+	c.response.Completed = true
 	c.response.Message = "Направления подготовки успешно добавлены"
 }
 
@@ -312,7 +312,7 @@ func addStudentsFromCSV(c *UserContext, rw web.ResponseWriter, req *web.Request)
 		}
 	}
 
-	c.response.Сompleted = true
+	c.response.Completed = true
 	c.response.Message = "Добавление успешно завершено."
 }
 
@@ -377,7 +377,7 @@ func addPracticisFromCSV(c *UserContext, rw web.ResponseWriter, req *web.Request
 		panic(fmt.Errorf("Ошибка. При подтверждении транзакции для создания практик: %v", err.Error()))
 	}
 
-	c.response.Сompleted = true
+	c.response.Completed = true
 	c.response.Message = "Практики успешно добавлены"
 }
 
@@ -449,7 +449,7 @@ func addCourseWorksFromCSV(c *UserContext, rw web.ResponseWriter, req *web.Reque
 		panic(fmt.Errorf("Ошибка. При подтверждении транзакции для создания курсовых работ: %v", err.Error()))
 	}
 
-	c.response.Сompleted = true
+	c.response.Completed = true
 	c.response.Message = "Курсовые работы успешно добавлены"
 }
 
@@ -482,7 +482,7 @@ func createVerif(c *UserContext, rw web.ResponseWriter, req *web.Request) {
 
 	verif.Password = ""
 
-	c.response.Сompleted = true
+	c.response.Completed = true
 	c.response.Message = "Верификатор успешно создан"
 	c.response.Body = verif
 }
@@ -495,6 +495,6 @@ func (c *UserContext) addFOSandRPD(rw web.ResponseWriter, req *web.Request) {
 		return
 	}
 
-	c.response.Сompleted = true
+	c.response.Completed = true
 	c.response.Message = "Документы успешно добавлены"
 }

@@ -123,7 +123,7 @@ func (c *Context) verifRequire(rw web.ResponseWriter, req *web.Request, next web
 
 // panicHandler - middleware, которое обрабатывает панику
 func (c *Context) panicHandler(rw web.ResponseWriter, req *web.Request, err interface{}) {
-	c.response.Сompleted = false
+	c.response.Completed = false
 	c.response.Body = nil
 	c.response.Message = "Неполадки на сервере, повторите попытку позже."
 
@@ -153,16 +153,16 @@ func (c *Context) toJSON(rw web.ResponseWriter, req *web.Request, next web.NextM
 
 func (c *Context) getDepartments(rw web.ResponseWriter, req *web.Request) {
 	c.response.Body = dbu.GetAllDepartments()
-	c.response.Сompleted = true
+	c.response.Completed = true
 }
 
 func (c *Context) getFaculties(rw web.ResponseWriter, req *web.Request) {
 	c.response.Body = dbu.GetAllFaculties()
-	c.response.Сompleted = true
+	c.response.Completed = true
 }
 func (c *Context) notFound(rw web.ResponseWriter, req *web.Request) {
 	c.response.Message = "Указанной страницы не существует"
-	c.response.Сompleted = false
+	c.response.Completed = false
 }
 
 func GetRoots() *web.Router {

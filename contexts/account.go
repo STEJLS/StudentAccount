@@ -51,7 +51,7 @@ func (c *AuthContext) Login(rw web.ResponseWriter, req *web.Request) {
 
 	log.Printf("Инфо. Пользователь %v авторизовался.", c.login)
 	user.Password = ""
-	c.response.Сompleted = true
+	c.response.Completed = true
 	c.response.Message = "Вы успешно авторизовались в системе"
 	c.response.Body = user
 }
@@ -79,7 +79,7 @@ func (c *AuthContext) Logout(rw web.ResponseWriter, req *web.Request) {
 	g.Lock.RLock()
 	delete(g.Sessions, cookie.Value)
 	g.Lock.RUnlock()
-	c.response.Сompleted = true
+	c.response.Completed = true
 	c.response.Message = "Вы успешно вышли из системы"
 }
 
@@ -107,6 +107,6 @@ func ChangePassword(c *AuthContext, rw web.ResponseWriter, req *web.Request) {
 		return
 	}
 
-	c.response.Сompleted = true
+	c.response.Completed = true
 	c.response.Message = "Ваш пароль успешно изменен"
 }

@@ -30,11 +30,11 @@
       .then(r => {
         r.json().then(json => {
           
-          if (json.Сompleted){
+          if (json.Completed){
             localStorage.setItem('user', JSON.stringify(json.Body));
             console.log(json);
             console.log(json.Message);
-            console.log(json.Сompleted);
+            console.log(json.Completed);
             console.log(json.Body);
             switch (json.Body.Role) {
               case 0: 

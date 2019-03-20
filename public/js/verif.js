@@ -72,7 +72,7 @@ function changePassword(e) {
     fetch('account/changePassword', getPasOptions()).then(r => {
         r.json().then( json =>{
             checkAuth(json);
-            if (json.Сompleted){
+            if (json.Completed){
                 setSuccessNote("ChangePassResponse", json.Message);
                 e.target.reset();
             } else{
@@ -223,7 +223,7 @@ function verifCourseCancel(id) {
     fetch('verif/cancelCourse', getCancelCourseOptions(id)).then(r => {
         r.json().then( json =>{
             checkAuth(json);
-            if (json.Сompleted){
+            if (json.Completed){
                 setCoursesForVerif();
                 setSuccessNote("verifCourseResponse", json.Message);
                 $('#verif-course-modal').modal('hide'); 
@@ -249,7 +249,7 @@ function verifCourseConfirm(e, id) {
     fetch('verif/course', getConfirmCourseOptions(id)).then(r => {
         r.json().then( json =>{
             checkAuth(json);
-            if (json.Сompleted){
+            if (json.Completed){
                 setCoursesForVerif();
                 setSuccessNote("verifCourseResponse", json.Message);
                 $('#verif-course-modal').modal('hide'); 
@@ -303,7 +303,7 @@ function verifArticleCancel(id) {
     fetch('verif/cancelArticle', getCancelArticleOptions(id)).then(r => {
         r.json().then( json =>{
             checkAuth(json);
-            if (json.Сompleted){
+            if (json.Completed){
                 setArticlesToVerif();
                 setSuccessNote("verifArticleResponse", json.Message);
                 $('#verif-article-modal').modal('hide'); 
@@ -334,7 +334,7 @@ function verifArticleConfirm(e, id) {
     fetch('verif/article', getConfirmArticleOptions(id)).then(r => {
         r.json().then( json =>{
             checkAuth(json);
-            if (json.Сompleted){
+            if (json.Completed){
                 setArticlesToVerif();
                 setSuccessNote("verifArticleResponse", json.Message);
                 $('#verif-article-modal').modal('hide'); 

@@ -85,7 +85,7 @@ func (c *VerifContext) cancelArticle(rw web.ResponseWriter, req *web.Request) {
 
 	os.Remove(path.Join(g.ArticlesDirectory, fileName))
 
-	c.response.Сompleted = true
+	c.response.Completed = true
 	c.response.Body = "Статья успешно отклонена"
 }
 
@@ -108,7 +108,7 @@ func (c *VerifContext) cancelCourse(rw web.ResponseWriter, req *web.Request) {
 		return
 	}
 
-	c.response.Сompleted = true
+	c.response.Completed = true
 	c.response.Body = "Статья успешно отклонена"
 }
 
@@ -137,7 +137,7 @@ func (c *VerifContext) confirmCourse(rw web.ResponseWriter, req *web.Request) {
 		return
 	}
 
-	c.response.Сompleted = true
+	c.response.Completed = true
 	c.response.Body = "Курсовая работа успешно подтверждена"
 }
 
@@ -167,7 +167,7 @@ func (c *VerifContext) confirmArticle(rw web.ResponseWriter, req *web.Request) {
 		return
 	}
 
-	c.response.Сompleted = true
+	c.response.Completed = true
 	c.response.Body = "Статья успешно подтверждена"
 }
 
@@ -219,7 +219,7 @@ func (c *VerifContext) articlesForVerif(rw web.ResponseWriter, req *web.Request)
 	}
 
 	c.response.Body = articlesInfo
-	c.response.Сompleted = true
+	c.response.Completed = true
 }
 
 func (c *VerifContext) coursesForVerif(rw web.ResponseWriter, req *web.Request) {
@@ -271,5 +271,5 @@ func (c *VerifContext) coursesForVerif(rw web.ResponseWriter, req *web.Request) 
 	}
 
 	c.response.Body = coursesInfo
-	c.response.Сompleted = true
+	c.response.Completed = true
 }

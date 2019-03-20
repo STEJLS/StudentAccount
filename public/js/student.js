@@ -70,7 +70,7 @@ function createArticle(e) {
       fetch('student/article', getArticleOptions()).then( r => {
         r.json().then(json => {
             checkAuth(json);
-            if (json.Сompleted){
+            if (json.Completed){
                 setSuccessNote("createArticleResponse", json.Message);
                 e.target.reset();
                 setArticles();
@@ -105,7 +105,7 @@ function changePassword(e) {
 fetch('account/changePassword', getPasOptions()).then(r => {
     r.json().then( json =>{
         checkAuth(json);
-        if (json.Сompleted){
+        if (json.Completed){
             setSuccessNote("ChangePassResponse", json.Message);
         } else{
             setErrorNote("ChangePassResponse", json.Message);
@@ -495,7 +495,7 @@ function studentCourseConfirm(e, id) {
     fetch('student/courseWork', getConfirmCourseOptions(id)).then(r => {
         r.json().then( json =>{
             checkAuth(json);
-            if (json.Сompleted){
+            if (json.Completed){
                 setCourse();
                 setSuccessNote("verifCourseResponse", json.Message);
                 $('#verif-course-modal').modal('hide'); 

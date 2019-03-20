@@ -58,7 +58,7 @@ func getStudentMarks(c *studentContext, rw web.ResponseWriter, req *web.Request)
 	}
 
 	c.response.Body = marks
-	c.response.Сompleted = true
+	c.response.Completed = true
 }
 
 func getStudentInfo(c *studentContext, rw web.ResponseWriter, req *web.Request) {
@@ -95,7 +95,7 @@ func getStudentInfo(c *studentContext, rw web.ResponseWriter, req *web.Request) 
 	}
 
 	c.response.Body = userInfo
-	c.response.Сompleted = true
+	c.response.Completed = true
 }
 
 func addArticle(c *studentContext, rw web.ResponseWriter, req *web.Request) {
@@ -157,7 +157,7 @@ func addArticle(c *studentContext, rw web.ResponseWriter, req *web.Request) {
 
 	}
 
-	c.response.Сompleted = true
+	c.response.Completed = true
 	c.response.Message = "Статья добавлена"
 }
 
@@ -193,7 +193,7 @@ func addCourseWorkName(c *studentContext, rw web.ResponseWriter, req *web.Reques
 		return
 	}
 
-	c.response.Сompleted = true
+	c.response.Completed = true
 	c.response.Message = "Тема курсовой работы успешно добавлена"
 }
 
@@ -235,7 +235,7 @@ func (c *studentContext) getPractices(rw web.ResponseWriter, req *web.Request) {
 	}
 
 	c.response.Body = practicesInfo
-	c.response.Сompleted = true
+	c.response.Completed = true
 }
 
 func (c *studentContext) getArticles(rw web.ResponseWriter, req *web.Request) {
@@ -278,7 +278,7 @@ func (c *studentContext) getArticles(rw web.ResponseWriter, req *web.Request) {
 	}
 
 	c.response.Body = articlesInfo
-	c.response.Сompleted = true
+	c.response.Completed = true
 }
 
 func (c *studentContext) getCourses(rw web.ResponseWriter, req *web.Request) {
@@ -328,7 +328,7 @@ func (c *studentContext) getCourses(rw web.ResponseWriter, req *web.Request) {
 	}
 
 	c.response.Body = coursesInfo
-	c.response.Сompleted = true
+	c.response.Completed = true
 }
 
 func (c *studentContext) getFOSandRPDList(rw web.ResponseWriter, req *web.Request) {
@@ -342,7 +342,7 @@ func (c *studentContext) getFOSandRPDList(rw web.ResponseWriter, req *web.Reques
 
 	if err != nil {
 		if err == sql.ErrNoRows {
-			c.response.Сompleted = true
+			c.response.Completed = true
 			c.response.Message = "Для вашего направления подготовки еще нет документов"
 			return
 		}
@@ -375,7 +375,7 @@ func (c *studentContext) getFOSandRPDList(rw web.ResponseWriter, req *web.Reques
 	}
 
 	c.response.Body = result
-	c.response.Сompleted = true
+	c.response.Completed = true
 }
 
 func (c *studentContext) getDocument(rw web.ResponseWriter, req *web.Request) {
