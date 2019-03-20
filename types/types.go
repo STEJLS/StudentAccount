@@ -98,7 +98,7 @@ const (
 
 // ResponseMessage - структура, которая представляет собой форму ответа каждого обработчика
 type ResponseMessage struct {
-	Сompleted bool
+	Completed bool
 	Message   string
 	Body      interface{}
 }
